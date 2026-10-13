@@ -1,0 +1,27 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*serviceAccount*.json
+*service-account*.json
+firebase-adminsdk*.json
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+
+# System and editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Logs and generated files
+*.log
+coverage/
+dist/
+build/
+
+# Local user data
+users.json

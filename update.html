@@ -1,0 +1,2649 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduBridge — First Year Engineering Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0A1220;
+    --navy-panel:#101B2E;
+    --navy-panel-2:#0D1725;
+    --grid-line: rgba(56,189,248,0.09);
+    --grid-line-strong: rgba(56,189,248,0.16);
+    --cyan:#38BDF8;
+    --cyan-soft:#7DD3FC;
+    --amber:#F2A93B;
+    --text-hi:#EAF1FA;
+    --text-mid:#A9B9D1;
+    --text-dim:#6E7F9B;
+    --border:#1E2C45;
+    --border-soft:#16223A;
+    --success:#34D399;
+    --danger:#F0654F;
+    --white-ink:#0A1220;
+    --radius:10px;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--navy-deep);
+    color:var(--text-hi);
+    font-family:var(--body);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:34px 34px;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  #app{min-height:100vh; display:flex; flex-direction:column;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:var(--body); cursor:pointer;}
+  input,select,button{font-family:var(--body); font-size:14px;}
+  ::selection{background:var(--cyan); color:var(--white-ink);}
+ 
+  /* ---------- top nav ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 34px;
+    border-bottom:1px solid var(--border-soft);
+    background:linear-gradient(180deg, rgba(16,27,46,0.9), rgba(16,27,46,0.55));
+    backdrop-filter:blur(6px);
+    position:sticky; top:0; z-index:50;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:38px;height:38px;flex-shrink:0;}
+  .brand-word{font-family:var(--display); font-weight:700; font-size:21px; letter-spacing:0.2px;}
+  .brand-tag{font-size:11.5px; color:var(--text-dim); margin-top:1px;}
+  .role-chip{
+    font-family:var(--mono); font-size:11px; padding:5px 11px; border-radius:20px;
+    border:1px solid var(--border); color:var(--cyan-soft); background:rgba(56,189,248,0.06);
+  }
+  .topbar-right{display:flex; align-items:center; gap:14px;}
+  .logout-link{font-size:13px; color:var(--text-mid); border:1px solid var(--border); padding:8px 16px; border-radius:8px; background:transparent; transition:all .15s;}
+  .logout-link:hover{color:var(--text-hi); border-color:var(--cyan); }
+ 
+  main{flex:1; width:100%;}
+ 
+  /* ---------- generic building blocks ---------- */
+  .container{max-width:1600px; margin:0 auto; padding:0 34px;}
+  .container-fluid{width:100%; max-width:none; margin:0; padding:0;}
+  .btn{
+    border:none; border-radius:8px; padding:13px 22px; font-weight:600; font-size:14.5px;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:transform .12s, filter .12s;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--cyan); color:var(--white-ink);}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{background:transparent; color:var(--text-mid); border:1px solid var(--border);}
+  .btn-ghost:hover{color:var(--text-hi); border-color:var(--cyan);}
+  .btn-amber{background:var(--amber); color:#241505;}
+  .btn-amber:hover{filter:brightness(1.06);}
+  .btn-full{width:100%;}
+  .btn-sm{padding:8px 14px; font-size:13px;}
+ 
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; color:var(--text-mid); margin-bottom:7px; letter-spacing:0.2px;}
+  .field input, .field select{
+    width:100%; background:var(--navy-panel-2); border:1px solid var(--border); color:var(--text-hi);
+    padding:12px 13px; border-radius:8px; outline:none; transition:border-color .15s;
+  }
+  .field input:focus, .field select:focus{border-color:var(--cyan);}
+  .field-row{display:flex; gap:10px;}
+  .field-row .field{flex:1;}
+  .helper{font-size:12px; color:var(--text-dim); margin-top:6px;}
+  .error-text{font-size:12px; color:var(--danger); margin-top:6px; min-height:14px;}
+ 
+  .panel{background:var(--navy-panel); border:1px solid var(--border-soft); border-radius:var(--radius);}
+  .badge-mono{
+    font-family:var(--mono); font-size:11px; font-weight:600; color:var(--cyan-soft);
+    background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.25);
+    padding:3px 8px; border-radius:5px; letter-spacing:0.3px;
+  }
+ 
+  .truss{position:absolute; inset:0; pointer-events:none; opacity:0.5;}
+ 
+  /* ================= AUTH SCREENS ================= */
+  .auth-wrap{display:flex; min-height:calc(100vh - 71px);}
+  .auth-hero{
+    flex:1.15; position:relative; padding:70px 60px; display:flex; flex-direction:column; justify-content:center;
+    border-right:1px solid var(--border-soft);
+    background:radial-gradient(ellipse 700px 480px at 20% 20%, rgba(56,189,248,0.10), transparent 60%);
+  }
+  .auth-hero h1{
+    font-family:var(--display); font-size:44px; line-height:1.12; font-weight:700; max-width:520px; margin:0 0 18px 0;
+  }
+  .auth-hero p{color:var(--text-mid); font-size:15.5px; max-width:440px; line-height:1.6; margin:0 0 34px 0;}
+  .hero-stats{display:flex; gap:34px; margin-top:10px;}
+  .hero-stat b{font-family:var(--display); font-size:26px; display:block; color:var(--cyan-soft);}
+  .hero-stat span{font-size:12px; color:var(--text-dim);}
+  .auth-form-side{flex:1; display:flex; align-items:center; justify-content:center; padding:50px;}
+  .auth-card{width:100%; max-width:400px;}
+  .auth-card h2{font-family:var(--display); font-size:27px; margin:0 0 6px 0;}
+  .auth-card .sub{color:var(--text-mid); font-size:14px; margin:0 0 30px 0;}
+  .switch-line{margin-top:22px; font-size:13.5px; color:var(--text-mid); text-align:center;}
+  .switch-line button{background:none; border:none; color:var(--cyan-soft); font-weight:600; padding:0; font-size:13.5px;}
+ 
+  .segmented{display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:22px;}
+  .segmented button{
+    flex:1; background:var(--navy-panel-2); color:var(--text-mid); border:none; padding:11px 0; font-weight:600; font-size:13.5px;
+    border-right:1px solid var(--border);
+  }
+  .segmented button:last-child{border-right:none;}
+  .segmented button.active{background:var(--cyan); color:var(--white-ink);}
+ 
+  .bridge-strip{width:100%; height:64px; opacity:0.7;}
+ 
+  /* ================= DASHBOARD ================= */
+  .page-head{padding:44px 0 26px 0;}
+  .page-head h1{font-family:var(--display); font-size:30px; margin:0 0 6px 0;}
+  .page-head p{color:var(--text-mid); margin:0; font-size:14.5px;}
+  .eyebrow{font-family:var(--mono); font-size:12px; color:var(--amber); margin-bottom:10px; display:block;}
+ 
+  .bento{display:grid; grid-template-columns:repeat(6,1fr); gap:16px; padding-bottom:50px;}
+  .bento-card{
+    border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--navy-panel);
+    padding:22px; cursor:pointer; transition:border-color .15s, transform .12s; position:relative; overflow:hidden;
+  }
+  .bento-card:hover{border-color:var(--cyan); transform:translateY(-2px);}
+  .bento-card .ic{font-size:26px; margin-bottom:14px; display:block;}
+  .bento-card h3{font-family:var(--display); font-size:17px; margin:0 0 5px 0;}
+  .bento-card p{color:var(--text-dim); font-size:12.5px; margin:0;}
+  .span-3{grid-column:span 3;}
+  .span-2{grid-column:span 2;}
+  .span-4{grid-column:span 4;}
+  .span-6{grid-column:span 6;}
+ 
+  /* ================= STUDY MATERIAL (batch overview) ================= */
+  .batch-banner{
+    background:linear-gradient(120deg, #0C1830 0%, #0A1220 60%);
+    border-bottom:1px solid var(--border-soft);
+    padding:38px 0 0 0;
+    position:relative;
+  }
+  .batch-banner-inner{display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:0;}
+  .batch-banner h1{font-family:var(--display); font-size:26px; margin:0 0 8px 0; max-width:640px;}
+  .batch-banner .meta{display:flex; gap:18px; color:var(--text-dim); font-size:12.5px; margin-bottom:22px; flex-wrap:wrap;}
+  .batch-banner .meta span{display:flex; align-items:center; gap:6px;}
+ 
+  .tabbar{display:flex; gap:4px; border-bottom:1px solid var(--border-soft); background:var(--navy-panel-2);}
+  .tabbar-inner{display:flex; gap:6px; overflow-x:auto;}
+  .tab-btn{
+    background:none; border:none; color:var(--text-dim); font-weight:600; font-size:13.5px;
+    padding:15px 6px; border-bottom:2px solid transparent; white-space:nowrap;
+  }
+  .tab-btn.active{color:var(--cyan-soft); border-bottom-color:var(--cyan);}
+ 
+  .info-strip{background:#0F2436; border-bottom:1px solid var(--border-soft); padding:10px 0;}
+  .info-strip-inner{display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--cyan-soft);}
+  .info-strip button{background:none; border:none; color:var(--text-dim); font-size:15px;}
+ 
+  .material-body{padding:34px 0 60px 0; min-height:340px;}
+ 
+  .subject-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .subject-card{
+    display:flex; align-items:center; gap:16px; padding:18px; border:1px solid var(--border-soft);
+    border-radius:var(--radius); background:var(--navy-panel); cursor:pointer; transition:border-color .15s;
+  }
+  .subject-card:hover{border-color:var(--cyan);}
+  .subject-code{
+    font-family:var(--mono); font-weight:700; font-size:12px; color:var(--navy-deep); background:var(--cyan-soft);
+    min-width:52px; height:44px; padding:0 6px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .subject-info{flex:1; min-width:0;}
+  .subject-info .name{font-weight:600; font-size:15px; margin-bottom:8px;}
+  .subject-info .prog-row{display:flex; align-items:center; gap:10px;}
+  .prog-track{flex:1; height:6px; background:var(--border-soft); border-radius:4px; overflow:hidden;}
+  .prog-fill{height:100%; background:linear-gradient(90deg, var(--cyan), var(--cyan-soft)); border-radius:4px; transition:width .3s;}
+  .prog-pct{font-family:var(--mono); font-size:11.5px; color:var(--text-dim); width:34px; text-align:right;}
+  .chevron{color:var(--text-dim); font-size:20px;}
+ 
+  .list-row{
+    display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border:1px solid var(--border-soft);
+    border-radius:var(--radius); background:var(--navy-panel); margin-bottom:10px;
+  }
+  .list-row .left{display:flex; align-items:center; gap:12px;}
+  .list-row .left .dot{width:8px; height:8px; border-radius:50%; background:var(--cyan);}
+  .announcement-row{padding:16px 18px; border-left:2px solid var(--amber); background:var(--navy-panel); margin-bottom:10px; border-radius:0 8px 8px 0;}
+  .announcement-row .date{font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:4px;}
+ 
+  .desc-text{color:var(--text-mid); line-height:1.75; font-size:14.5px; max-width:680px;}
+ 
+  /* ================= modal ================= */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(6,10,18,0.72); display:flex; align-items:center; justify-content:center;
+    z-index:200; backdrop-filter:blur(3px);
+  }
+  .modal-box{background:var(--navy-panel); border:1px solid var(--border); border-radius:12px; width:100%; max-width:400px; padding:30px;}
+  .modal-box h3{font-family:var(--display); font-size:19px; margin:0 0 18px 0;}
+ 
+  /* ================= assignments / progress / profile ================= */
+  .assign-row{display:flex; align-items:center; gap:14px; padding:16px 18px; border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--navy-panel); margin-bottom:10px;}
+  .assign-row input[type=checkbox]{width:18px; height:18px; accent-color:var(--cyan);}
+  .assign-row .name{flex:1; font-size:14.5px;}
+  .assign-row .subject-tag{font-family:var(--mono); font-size:10.5px; color:var(--text-dim);}
+ 
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:26px 0 32px 0;}
+  .stat-card{background:var(--navy-panel); border:1px solid var(--border-soft); border-radius:var(--radius); padding:22px; text-align:center;}
+  .stat-card .ic{font-size:22px; margin-bottom:10px; display:block;}
+  .stat-card b{font-family:var(--display); font-size:24px; display:block; color:var(--cyan-soft);}
+  .stat-card span{font-size:11.5px; color:var(--text-dim);}
+  .overall-bar-wrap{margin:18px 0 8px 0;}
+  .overall-num{font-family:var(--display); font-size:38px; color:var(--cyan-soft);}
+  .overall-track{height:10px; background:var(--border-soft); border-radius:6px; overflow:hidden; margin-top:14px;}
+ 
+  .profile-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--border-soft); border-radius:var(--radius); overflow:hidden;}
+  .profile-item{padding:18px 22px; border-bottom:1px solid var(--border-soft); border-right:1px solid var(--border-soft);}
+  .profile-item:nth-child(2n){border-right:none;}
+  .profile-item .k{font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:6px; letter-spacing:0.3px;}
+  .profile-item .v{font-size:14.5px; font-weight:500;}
+ 
+  /* ================= AI chat ================= */
+  .chat-shell{display:flex; flex-direction:column; height:520px; border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--navy-panel); overflow:hidden;}
+  .chat-log{flex:1; overflow-y:auto; padding:22px; display:flex; flex-direction:column; gap:14px;}
+  .msg{max-width:72%; padding:12px 15px; border-radius:10px; font-size:14px; line-height:1.55; white-space:pre-wrap;}
+  .msg.bot{background:var(--navy-panel-2); border:1px solid var(--border-soft); align-self:flex-start; border-bottom-left-radius:2px;}
+  .msg.user{background:var(--cyan); color:var(--white-ink); align-self:flex-end; border-bottom-right-radius:2px; font-weight:500;}
+  .msg .sender{font-family:var(--mono); font-size:10px; opacity:0.65; display:block; margin-bottom:4px;}
+  .chat-input-bar{display:flex; gap:10px; padding:16px; border-top:1px solid var(--border-soft);}
+  .chat-input-bar input{flex:1; background:var(--navy-panel-2); border:1px solid var(--border); color:var(--text-hi); padding:12px 13px; border-radius:8px; outline:none;}
+  .chat-input-bar input:focus{border-color:var(--cyan);}
+ 
+  /* ================= mentor ================= */
+  .mentor-list{max-height:420px; overflow-y:auto;}
+  .mentor-student-row{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border-soft);}
+  .mentor-student-row:last-child{border-bottom:none;}
+ 
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+ 
+  /* ================= SUBJECT DETAIL (chapters + tabs) ================= */
+  .subject-hero{
+    background:linear-gradient(120deg, #0C1830 0%, #0A1220 60%);
+    border-bottom:1px solid var(--border-soft);
+    padding:34px 0 0 0;
+  }
+  .subject-hero-inner{display:flex; justify-content:space-between; align-items:flex-end; padding:0 34px;}
+  .subject-hero .subject-code-lg{
+    font-family:var(--mono); font-weight:700; font-size:14px; color:var(--navy-deep); background:var(--cyan-soft);
+    min-width:56px; height:46px; padding:0 10px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px;
+  }
+  .subject-hero h1{font-family:var(--display); font-size:27px; margin:0 0 8px 0;}
+  .subject-hero .meta{display:flex; gap:18px; color:var(--text-dim); font-size:12.5px; margin-bottom:22px; flex-wrap:wrap;}
+ 
+  .subject-detail-layout{display:flex; gap:0; align-items:stretch; width:100%; min-height:calc(100vh - 260px);}
+  .chapter-sidebar{
+    width:300px; flex-shrink:0; border-right:1px solid var(--border-soft); background:var(--navy-panel-2);
+    padding:22px 16px 22px 26px;
+  }
+  .chapter-sidebar-title{font-family:var(--mono); font-size:11px; color:var(--text-dim); letter-spacing:0.6px; padding:0 8px 12px 8px;}
+  .chapter-group-label{font-family:var(--mono); font-size:10.5px; color:var(--amber); letter-spacing:0.5px; padding:14px 8px 6px 8px;}
+  .chapter-item{
+    display:flex; align-items:center; gap:10px; padding:12px 10px; border-radius:8px; cursor:pointer; margin-bottom:4px;
+    border-left:3px solid transparent;
+  }
+  .chapter-item:hover{background:rgba(56,189,248,0.06);}
+  .chapter-item.active{background:rgba(56,189,248,0.10); border-left-color:var(--cyan);}
+  .chapter-item .chip{
+    font-family:var(--mono); font-size:10.5px; font-weight:700; color:var(--cyan-soft);
+    background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.25); padding:3px 7px; border-radius:5px; flex-shrink:0;
+  }
+  .chapter-item.active .chip{background:var(--cyan); color:var(--white-ink); border-color:var(--cyan);}
+  .chapter-item .ctitle{font-size:13px; color:var(--text-mid); line-height:1.3;}
+  .chapter-item.active .ctitle{color:var(--text-hi); font-weight:600;}
+ 
+  .subject-main{flex:1; min-width:0; padding:28px 44px 60px 44px;}
+  .subject-back{padding:24px 34px 50px 34px;}
+  .subject-tabbar{display:flex; gap:22px; border-bottom:1px solid var(--border-soft); margin-bottom:26px; overflow-x:auto;}
+  .subject-tabbar button{
+    background:none; border:none; color:var(--text-dim); font-weight:600; font-size:14px;
+    padding:0 0 14px 0; border-bottom:2px solid transparent; white-space:nowrap;
+  }
+  .subject-tabbar button.active{color:var(--cyan-soft); border-bottom-color:var(--cyan);}
+ 
+  .doc-card{background:var(--navy-panel); border:1px solid var(--border-soft); border-radius:var(--radius); padding:26px; margin-bottom:18px;}
+  .doc-card h4{font-family:var(--display); font-size:16px; margin:0 0 14px 0; color:var(--cyan-soft);}
+  .doc-meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px;}
+  .doc-meta-pill{font-family:var(--mono); font-size:11.5px; color:var(--text-mid); background:var(--navy-panel-2); border:1px solid var(--border); padding:6px 11px; border-radius:6px;}
+  .doc-list{margin:0; padding-left:20px; color:var(--text-mid); font-size:13.5px; line-height:1.85;}
+  .doc-unit-title{font-weight:600; font-size:15px; color:var(--text-hi); margin-bottom:6px;}
+  .doc-unit-hours{font-family:var(--mono); font-size:11.5px; color:var(--amber); margin-bottom:12px; display:inline-block;}
+ 
+  .lecture-card{display:flex; gap:18px; padding:20px; border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--navy-panel); margin-bottom:14px;}
+  .lecture-thumb{
+    width:120px; height:80px; border-radius:8px; flex-shrink:0; background:linear-gradient(135deg, #16233c, #0d1725);
+    display:flex; align-items:center; justify-content:center; font-size:28px; border:1px solid var(--border-soft); position:relative;
+  }
+  .lecture-thumb .play-dot{position:absolute; bottom:6px; right:6px; width:22px; height:22px; border-radius:50%; background:var(--danger); display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;}
+  .lecture-info{flex:1; min-width:0;}
+  .lecture-info .kind{font-size:12px; color:var(--text-dim); margin-bottom:4px;}
+  .lecture-info .title{font-weight:600; font-size:15px; margin-bottom:10px;}
+  .lecture-actions{display:flex; gap:10px; margin-top:12px;}
+ 
+  .qp-row{display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--navy-panel); margin-bottom:10px;}
+  .qp-row .left{display:flex; align-items:center; gap:12px;}
+  .qp-icon{width:36px; height:36px; border-radius:8px; background:rgba(242,169,59,0.12); border:1px solid rgba(242,169,59,0.3); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;}
+ 
+  .qb-card{background:var(--navy-panel); border:1px solid var(--border-soft); border-radius:var(--radius); padding:24px 26px; margin-bottom:16px;}
+  .qb-head{display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap;}
+  .qb-head h4{font-family:var(--display); font-size:16px; margin:0; color:var(--text-hi);}
+  .qb-list{margin:0; padding-left:22px; color:var(--text-mid); font-size:14px; line-height:1.7;}
+  .qb-list li{margin-bottom:12px; padding-left:4px;}
+  .qb-code{
+    font-family:var(--mono); font-size:12.5px; color:var(--cyan-soft); background:var(--navy-panel-2);
+    border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin:8px 0 0 0; white-space:pre-wrap; line-height:1.6;
+  }
+  .qb-title-row{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .qb-title-row .qp-icon{flex-shrink:0;}
+  .qb-title-row b{font-size:15px;}
+  .qb-title-row small{display:block; color:var(--text-dim); font-size:12px; margin-top:2px;}
+ 
+  .paper-card{background:var(--navy-panel); border:1px solid var(--border-soft); border-radius:var(--radius); margin-bottom:16px; overflow:hidden;}
+  .paper-card[open]{border-color:rgba(56,189,248,0.35);}
+  .paper-card summary{list-style:none; cursor:pointer; padding:18px 22px; display:flex; align-items:center; gap:12px; font-weight:600; font-size:15px;}
+  .paper-card summary::-webkit-details-marker{display:none;}
+  .paper-card summary::after{content:"▾"; margin-left:auto; color:var(--text-dim); transition:transform .15s;}
+  .paper-card[open] summary::after{transform:rotate(180deg);}
+  .paper-body{padding:4px 26px 26px 26px; border-top:1px solid var(--border-soft);}
+  .paper-meta{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 6px 0;}
+  .paper-inst-title{font-family:var(--mono); font-size:11px; color:var(--amber); letter-spacing:0.5px; margin:16px 0 6px 0;}
+  .paper-q{margin-top:22px; padding-top:18px; border-top:1px dashed var(--border);}
+  .paper-q-head{display:flex; align-items:baseline; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .paper-q-head b{font-family:var(--display); font-size:16px; color:var(--cyan-soft);}
+  .paper-q-head span{color:var(--text-mid); font-size:13.5px;}
+  .paper-part{display:flex; gap:12px; padding:9px 0; font-size:14px; line-height:1.65; color:var(--text-hi);}
+  .paper-part .pl{font-family:var(--mono); color:var(--text-dim); width:22px; flex-shrink:0;}
+  .paper-part .pt{flex:1; min-width:0;}
+  .paper-marks{font-family:var(--mono); font-size:11.5px; color:var(--amber); flex-shrink:0; white-space:nowrap;}
+  .paper-opts{margin:6px 0 0 0; padding-left:0; list-style:none; color:var(--text-mid); font-size:13.5px; line-height:1.7;}
+  .paper-note{margin-top:8px; font-size:12.5px; color:var(--text-dim); background:var(--navy-panel-2); border:1px dashed var(--border); border-radius:8px; padding:8px 12px;}
+ 
+  /* ================= FEEDBACK / COMPLAINT DOODLE BOX ================= */
+  .fb-fab{
+    position:fixed; right:22px; bottom:22px; z-index:150; background:none; border:none; padding:0;
+    width:68px; height:68px; display:flex; align-items:center; justify-content:center;
+    filter:drop-shadow(3px 4px 0 rgba(56,189,248,0.22)); transform:rotate(-4deg); transition:transform .15s;
+    animation:fbWiggle 4.5s ease-in-out infinite;
+  }
+  .fb-fab:hover{transform:rotate(3deg) scale(1.08); animation:none;}
+  .fb-fab svg{width:64px; height:64px; overflow:visible;}
+  .fb-tip{
+    position:absolute; right:74px; top:10px; white-space:nowrap; font-family:'Caveat',cursive; font-weight:700; font-size:21px;
+    color:var(--amber); transform:rotate(-3deg); pointer-events:none; opacity:0; animation:fbTip 10s ease-in-out 1.2s 1 forwards;
+  }
+  .fb-fab:hover .fb-tip{opacity:1; animation:none;}
+  @keyframes fbWiggle{0%,86%,100%{transform:rotate(-4deg);}90%{transform:rotate(5deg);}94%{transform:rotate(-7deg);}97%{transform:rotate(3deg);}}
+  @keyframes fbTip{0%{opacity:0;}8%,80%{opacity:1;}100%{opacity:0;}}
+  @keyframes fbPop{from{opacity:0; transform:translateY(12px) scale(.96);}to{opacity:1; transform:none;}}
+  .fb-panel{
+    position:fixed; right:22px; bottom:104px; z-index:150; width:370px; max-width:calc(100vw - 32px);
+    max-height:calc(100vh - 130px); overflow-y:auto; padding:20px 22px 22px 22px;
+    background:var(--navy-panel); border:2px dashed var(--cyan); border-radius:20px 26px 18px 28px;
+    box-shadow:7px 8px 0 rgba(56,189,248,0.16), 0 20px 50px rgba(0,0,0,0.45); animation:fbPop .18s ease-out;
+  }
+  .fb-panel[hidden]{display:none;}
+  .fb-head{display:flex; align-items:center; justify-content:space-between;}
+  .fb-title{font-family:'Caveat',cursive; font-weight:700; font-size:30px; color:var(--cyan-soft); transform:rotate(-1.5deg); display:inline-block;}
+  .fb-x{background:none; border:none; color:var(--text-dim); font-size:17px; padding:4px 6px;}
+  .fb-x:hover{color:var(--text-hi);}
+  .fb-sub{color:var(--text-dim); font-size:12.5px; line-height:1.55; margin:2px 0 14px 0;}
+  .fb-types{display:flex; gap:6px; margin-bottom:14px;}
+  .fb-types button{
+    flex:1; background:var(--navy-panel-2); color:var(--text-mid); border:1.5px dashed var(--border); border-radius:12px 14px 12px 15px;
+    padding:9px 4px; font-size:12.5px; font-weight:600; transition:all .12s;
+  }
+  .fb-types button:hover{border-color:var(--cyan);}
+  .fb-types button.active{background:rgba(56,189,248,0.14); color:var(--cyan-soft); border:1.5px solid var(--cyan);}
+  .fb-types button.active.is-complaint{background:rgba(240,101,79,0.14); color:var(--danger); border-color:var(--danger);}
+  .fb-stars{display:flex; gap:4px; margin:0 0 14px 0; align-items:center;}
+  .fb-stars button{background:none; border:none; font-size:28px; line-height:1; color:var(--border); padding:0 2px; transition:transform .1s, color .1s;}
+  .fb-stars button.on{color:var(--amber);}
+  .fb-stars button:hover{transform:scale(1.2) rotate(-6deg);}
+  .fb-stars span{font-family:'Caveat',cursive; font-size:19px; color:var(--text-dim); margin-left:6px;}
+  .fb-field{margin-bottom:12px;}
+  .fb-field label{display:block; font-size:12px; font-weight:600; color:var(--text-mid); margin-bottom:6px;}
+  .fb-field select, .fb-field input[type=text], .fb-field textarea{
+    width:100%; background:var(--navy-panel-2); border:1px solid var(--border); color:var(--text-hi);
+    padding:10px 12px; border-radius:8px; outline:none; font-family:var(--body); font-size:13.5px;
+  }
+  .fb-field textarea{resize:vertical; min-height:96px; line-height:1.5;}
+  .fb-field select:focus, .fb-field input:focus, .fb-field textarea:focus{border-color:var(--cyan);}
+  .fb-count{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-align:right; margin-top:4px;}
+  .fb-anon{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-mid); margin:2px 0 12px 0;}
+  .fb-anon input{accent-color:var(--cyan); width:15px; height:15px;}
+  .fb-done{text-align:center; padding:14px 6px 4px 6px;}
+  .fb-done svg{width:78px; height:78px;}
+  .fb-done h4{font-family:'Caveat',cursive; font-size:32px; margin:6px 0 4px 0; color:var(--cyan-soft);}
+  .fb-done p{color:var(--text-mid); font-size:13.5px; margin:0 0 18px 0; line-height:1.55;}
+  .fb-done .row{display:flex; gap:8px;}
+  .fb-item{border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; background:var(--navy-panel-2); padding:14px 16px; margin-bottom:10px;}
+  .fb-item.complaint{border-left-color:var(--danger);}
+  .fb-item.review{border-left-color:var(--amber);}
+  .fb-item-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; font-size:12px;}
+  .fb-item-top .stars{color:var(--amber); letter-spacing:1px;}
+  .fb-item-top .when{margin-left:auto; color:var(--text-dim); font-family:var(--mono); font-size:10.5px;}
+  .fb-item-msg{font-size:13.5px; line-height:1.6; color:var(--text-hi); white-space:pre-wrap; word-break:break-word;}
+  .fb-item-foot{display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:var(--text-dim);}
+  .fb-del{background:none; border:none; color:var(--text-dim); font-size:12px; padding:2px 6px;}
+  .fb-del:hover{color:var(--danger);}
+  @media (prefers-reduced-motion: reduce){ .fb-fab, .fb-tip, .fb-panel{animation:none;} }
+  @media(max-width:600px){ .fb-panel{right:12px; bottom:96px;} .fb-fab{right:12px; bottom:14px;} .fb-tip{display:none;} }
+ 
+  .empty-state{padding:60px 20px; text-align:center; color:var(--text-dim); line-height:1.7;}
+  .empty-state .ic{font-size:34px; margin-bottom:14px; display:block;}
+  .pending-box{
+    border:1px dashed var(--border); border-radius:var(--radius); background:var(--navy-panel);
+    padding:34px 26px; text-align:center; color:var(--text-mid); line-height:1.7;
+  }
+  .pending-box .ic{font-size:30px; display:block; margin-bottom:10px;}
+  .pending-box b{color:var(--text-hi);}
+ 
+  @media(max-width:900px){
+    .auth-wrap{flex-direction:column;}
+    .auth-hero{border-right:none; border-bottom:1px solid var(--border-soft); padding:44px 26px;}
+    .auth-hero h1{font-size:32px;}
+    .container{padding:0 18px;}
+    .bento{grid-template-columns:repeat(2,1fr);}
+    .span-3,.span-2,.span-4,.span-6{grid-column:span 2;}
+    .subject-grid{grid-template-columns:1fr;}
+    .profile-grid{grid-template-columns:1fr;}
+    .profile-item:nth-child(2n){border-right:1px solid var(--border-soft);}
+    .stat-grid{grid-template-columns:repeat(2,1fr);}
+    .field-row{flex-direction:column; gap:0;}
+    .subject-detail-layout{flex-direction:column;}
+    .chapter-sidebar{width:100%; min-height:auto; border-right:none; border-bottom:1px solid var(--border-soft);}
+    .subject-main{padding:24px 18px 50px 18px;}
+    .subject-hero-inner{padding:0 18px;}
+    .subject-back{padding:20px 18px 40px 18px;}
+    .chapter-sidebar{padding:18px 14px;}
+    .lecture-card{flex-direction:column;}
+    .lecture-thumb{width:100%; height:120px;}
+  }
+    .iv-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:30px;}
+  .iv-count{font-family:var(--mono); font-size:11px; color:var(--amber); margin-top:12px; display:block;}
+  .iv-ans{color:var(--text-mid); font-size:14px; line-height:1.7; margin:14px 0 0 0; white-space:pre-wrap;}
+  @media(max-width:900px){ .iv-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+ 
+<script>
+/* =========================================================
+   EDUBRIDGE — First Year Engineering learning portal
+   ========================================================= */
+ 
+/* ---------------------------------------------------------
+   SUBJECTS — matches your Google Drive folders
+   icon is used on the Courses screen
+   --------------------------------------------------------- */
+const SUBJECTS = [
+  { code:"PP",   name:"Python Programming",     icon:"🐍" },
+  { code:"EM",   name:"Engineering Mechanics",  icon:"⚙️" },
+  { code:"EC",   name:"Engineering Chemistry",  icon:"⚗️" },
+  { code:"CE",   name:"Communicative English",  icon:"🗣️" },
+  { code:"BEEE", name:"Basics of Electrical & Electronics Engg. (BEEE)", icon:"⚡" },
+  { code:"SMVC", name:"Single & Multivariable Calculus (SMVC)", icon:"📘" }
+];
+ 
+/* ---------------------------------------------------------
+   SYLLABUS DATA
+   PP is filled from 02_Python_Syllabus_NEP_Final_2024.pdf.
+   For every other subject, add an entry with the SAME shape
+   as PP (theory{...}, lab{...}) and the syllabus tab will
+   light up automatically — no other code changes needed.
+   Until then, the subject opens with a "syllabus pending" page.
+   --------------------------------------------------------- */
+const SYLLABUS_DATA = {
+  PP: {
+    subjectName: "Python Programming",
+    theory: {
+      label:"Theory",
+      courseCode:"APS21ESL101",
+      credits:2,
+      teachingScheme:"L – 2 hrs/week",
+      evaluationScheme:"CA – 60, ESE – 40",
+      duration:"2 Hrs (External Exam)",
+      prerequisites:["Basic Computer Knowledge","Knowledge of any programming language (optional)"],
+      objectives:[
+        "To understand fundamental concepts in Python Programming.",
+        "To learn the different conditional loops and iteration.",
+        "To understand various data structures and packages."
+      ],
+      outcomes:[
+        "CO1: Describe programming fundamentals of Python.",
+        "CO2: Interpret the Python syntax and semantics of control flow statements.",
+        "CO3: Identify the methods to create and manipulate programs with Python data structures.",
+        "CO4: Use a modular approach for problem solving.",
+        "CO5: Apply advanced features and packages of Python programming required for data science."
+      ],
+      units:[
+        { no:1, title:"Python for Everybody", hours:6,
+          content:"Why Program, Hardware Overview, Python as a Language, Why Python. Installation, Python & Jupyter Notebook, using the Python Playground, how to write and compile a program in Jupyter Notebook. Writing input and output statements, output formatting, comments and keywords, variables and variable assignments, operators, writing expressions." },
+        { no:2, title:"Conditional Loops and Iteration", hours:6,
+          content:"Conditional statements in Python, loops and iteration, definite loops, finding the largest value, loop idioms." },
+        { no:3, title:"Data Structures in Python", hours:6,
+          content:"Strings and manipulating strings, files and processing files, dictionaries and sets, tuples, lists and manipulating lists, lists and strings." },
+        { no:4, title:"Functions, Modules and Packages", hours:6,
+          content:"Functions, lambda functions, recursive functions, types of functions, modules and packages." },
+        { no:5, title:"Packages in Python for Data Science", hours:6,
+          content:"NumPy introduction and numerical operations on NumPy, introduction to Matplotlib, getting started with Pandas, data frame basics and key operations on data frames. Introduction to Data Science, binary search, finding common elements in lists using hash, finding largest elements, introduction to SQL." }
+      ],
+      textbooks:[
+        "D. Lee, \u201cPython Programming Fundamentals\u201d, 2nd Edition, Springer Publication.",
+        "Wes McKinney, \u201cPython for Data Analysis\u201d, O\u2019Reilly Publication."
+      ],
+      references:[
+        "The Python Language Reference \u2014 docs.python.org",
+        "The Python Standard Library \u2014 docs.python.org",
+        "SciPy Stats Tutorial \u2014 docs.scipy.org",
+        "Matplotlib mlab API \u2014 matplotlib.org",
+        "Seaborn documentation \u2014 seaborn.pydata.org",
+        "DataCamp Data Science Cheatsheets",
+        "PEP 20 \u2014 The Zen of Python",
+        "NumPy for MATLAB users \u2014 docs.scipy.org"
+      ]
+    },
+    lab: {
+      label:"Practical / Lab",
+      courseCode:"APS21ESP101",
+      credits:1,
+      teachingScheme:"P – 2 hrs/week",
+      evaluationScheme:"TW – 30, PR – 20",
+      prerequisites:["Nil"],
+      objectives:[
+        "To develop mathematical models using standard functions.",
+        "To determine derivatives of a function."
+      ],
+      outcomes:[
+        "CO1: Demonstrate a Python program using the development environment.",
+        "CO2: Develop logical thinking to solve problems using programming fundamental concepts.",
+        "CO3: Construct Python programs using various data structures.",
+        "CO4: Apply a modularization approach for solving complex problems.",
+        "CO5: Make use of various packages in Python for data science.",
+        "CO6: Implement different SQL commands in Python."
+      ],
+      units:[
+        { no:1, title:"Input / Output Operations", hours:10,
+          content:"Write a program to take input (integer, float, string) and print it." },
+        { no:2, title:"Programs Based on Operators", hours:10,
+          content:"Simple calculator (+ − / * %), area & perimeter of geometric objects, distance unit conversion (km \u2192 m, ft, in, cm), interchange two numbers, compute Fahrenheit from centigrade." },
+        { no:3, title:"Programs Based on Decision Making", hours:10,
+          content:"Grade calculator from marks (else-if ladder), gross salary calculator from basic salary slabs, youngest/oldest of three siblings, overtime pay calculator, speed-check demerit-points program." },
+        { no:4, title:"Programs Using while and for Loops", hours:"\u2014",
+          content:"Factorial of a number, palindrome check, Armstrong number check, Fibonacci series, FizzBuzz (1\u201350), perfect number check, prime number check, star/number pattern printing." },
+        { no:5, title:"Programs on Strings", hours:"\u2014",
+          content:"String length without len(), count letters/digits/special symbols, count vowels, count upper/lower case letters, palindrome check for strings." },
+        { no:6, title:"Programs on List and Tuple", hours:"\u2014",
+          content:"Sum and product of list items, largest/smallest number in a list, count elements & occurrences of an item, create a tuple with mixed data types, check element existence, reverse a tuple, product of tuple elements." },
+        { no:7, title:"Programs on Set and Dictionary", hours:"\u2014",
+          content:"Concatenate dictionaries, check whether a key exists, generate a number\u2013square dictionary, merge two dictionaries, find max/min value in a dictionary, set union/intersection/difference." },
+        { no:8, title:"Programs Using Functions", hours:"\u2014",
+          content:"Trip-cost calculator using hotel_cost, plane_ride_cost, rental_car_cost and trip_cost functions; even/odd check using a function; value-exchange function; sum of natural numbers and Fibonacci using recursion." },
+        { no:9, title:"NumPy, Matplotlib and Pandas", hours:"\u2014",
+          content:"Matrix addition, subtraction and multiplication using NumPy; plotting different graph types with Matplotlib; basic operations using Pandas." },
+        { no:10, title:"Programs on SQL Commands", hours:"\u2014",
+          content:"Binary search program, program performing basic SQL commands, programs based on real-life problems / GUI-based programs." }
+      ]
+    }
+  },
+ 
+  EM: {
+    subjectName: "Engineering Mechanics",
+    theory: {
+      label:"Theory",
+      courseCode:"APS21ESL103",
+      credits:2,
+      teachingScheme:"Theory – 2 hrs/week",
+      evaluationScheme:"CA – 60, End Sem – 40",
+      prerequisites:["Coordinate Geometry, Trigonometry, Sine & Cosine Rule, Unit Conversions","Fundamentals of Physics"],
+      objectives:["To develop capacity to predict the effect of force and motion in the course of carrying out the design functions of engineering."],
+      outcomes:[
+        "CO1: Identify the force system for given conditions by applying the basics of mechanics.",
+        "CO2: Determine the unknown forces of different engineering systems by applying equilibrium conditions.",
+        "CO3: Apply the principles of friction and locate Center of Gravity and find Moment of Inertia of plane lamina.",
+        "CO4: Establish the relations between kinematic parameters for different types of motion.",
+        "CO5: Formulate the relevant equations for types of motion in kinetics."
+      ],
+      units:[
+        { no:1, title:"Force System", hours:8,
+          content:"Introduction to Mechanics, laws of mechanics, Newton’s Laws, Law of Parallelogram, Law of transmissibility, characteristics of force, system of forces, method of resolution and composition, moment of a force, Law of Moments, Varignon’s Theorem, problems on moment, resultant, equivalent force & couple, properties of couple." },
+        { no:2, title:"Equilibrium", hours:7,
+          content:"Introduction to Equilibrium and its types, Equilibrant, concept of FBD, analytical conditions of equilibrium, equilibrium of different force systems, Lami’s Theorem, types of loads, beams and supports." },
+        { no:3, title:"Friction, Centre of Gravity and Moment of Inertia", hours:8,
+          content:"Friction: introduction to friction, types and application, laws of friction, angle of friction, angle of repose, cone of friction, problems on horizontal & inclined plane, block, and ladder. CG & MI: centroid of regular and composite plane lamina, MI and its application, Perpendicular Axis Theorem, Parallel Axis Theorem, radius of gyration, problems on plane and composite lamina." },
+        { no:4, title:"Kinematics", hours:4,
+          content:"Introduction and classification of dynamics, motion and its classification, rectilinear motion, equation of motion, motion curves, curvilinear motion, rectangular and tangential components of acceleration, projectile motion: general equation of projectile motion." },
+        { no:5, title:"Kinetics", hours:3,
+          content:"Basic concepts and laws of motion, D’Alembert’s Principle, problems on rectilinear motion, curvilinear motion, Work-Energy Principle, work done by force, weight force, frictional force and spring force, kinetic and potential energy of the particle, problems on all cases of work done, Principle of Impulse and Momentum, Principle of Conservation of Momentum, impact and its types, coefficient of restitution, problems on impact, problems on impulse and momentum, kinetics of rigid body problems." }
+      ],
+      textbooks:[
+        "Beer, F.P. and Johnston Jr. E.R., “Vector Mechanics for Engineers (In SI Units): Statics and Dynamics”, 8th Edition, Tata McGraw-Hill Publishing Company, New Delhi (2004).",
+        "Vela Murali, “Engineering Mechanics”, Oxford University Press (2010).",
+        "S. Timoshenko, D. H. Young, “Engineering Mechanics”, McGraw Hill, 1995.",
+        "Tayal A. K., “Engineering Mechanics”, Umesh Publications, 2010.",
+        "Singer F. L., “Engineering Mechanics – Statics & Dynamics”, Harper and Row Pub., New York.",
+        "Khurmi R. S., “Engineering Mechanics”, S. Chand Publications, New Delhi."
+      ],
+      references:[
+        "McLean, Nelson, “Engineering Mechanics”, Schaum’s Outline Series, McGraw Hill Book Company, New Delhi.",
+        "Hibbeler, R.C. and Ashok Gupta, “Engineering Mechanics: Statics and Dynamics”, 11th Edition, Pearson Education (2010).",
+        "Bhavikatti, S.S. and Rajashekarappa, K.G., “Engineering Mechanics”, New Age International (P) Limited Publishers (1998).",
+        "Irving H. Shames and Krishna Mohana Rao G., “Engineering Mechanics – Statics and Dynamics”, 4th Edition, Pearson Education (2006).",
+        "Rajasekaran S. and Sankarasubramanian G., “Engineering Mechanics Statics and Dynamics”, 3rd Edition, Vikas Publishing House Pvt. Ltd. (2005).",
+        "Meriam J.L. and Kraige L.G., “Engineering Mechanics – Statics Vol. 1, Dynamics Vol. 2”, Third Edition, John Wiley & Sons (1993).",
+        "Kumar, K.L., “Engineering Mechanics”, 3rd Revised Edition, Tata McGraw-Hill Publishing Company, New Delhi (2008)."
+      ],
+      eresources:["www.nptel.ac.in — learning platform from IIT professors","www.asnu.com.au — engineering applications","www.discoveryforengineers.com — investigating discoveries"]
+    }
+  },
+ 
+  EC: {
+    subjectName: "Engineering Chemistry",
+    theory: {
+      label:"Theory",
+      courseCode:"APS21BSL104",
+      note:"The uploaded syllabus page starts at Unit III. Units I and II (and the credit / evaluation details) will appear here once that first page is added.",
+      prerequisites:[],
+      units:[
+        { no:3, title:"Corrosion and its Control", hours:8,
+          content:"Introduction, types of corrosion, mechanism of dry & wet corrosion, factors influencing corrosion – nature of metal & nature of environment. Methods of corrosion control, cathodic and anodic protection, use of inhibitors, protective coatings: (a) metallic coatings – types of coatings, methods of application (hot dipping, cladding and electroplating); (b) non-metallic coatings – chemical conversion coatings, powder coatings." },
+        { no:4, title:"Fuels and Lubricants", hours:10,
+          content:"Fuels: introduction, classification of fuel, calorific value of a fuel, characteristics of a good fuel, solid fuel – coal, various types of coal, analysis of coal – proximate and ultimate analysis, numericals based on analysis of coals, liquid fuel – refining of petroleum, gaseous fuels – LPG and CNG. Lubricants: introduction, mechanism of lubrication, classification of lubricants (solid, semi-solid and liquid), properties of lubricants, physical properties – viscosity & viscosity index, surface tension, flash and fire point, cloud and pour point; chemical properties – acid value, saponification value, aniline point." },
+        { no:5, title:"Electrochemistry and Instrumental Methods of Chemical Analysis", hours:10,
+          content:"Electrochemistry: introduction – basic concepts: conductance, specific conductance, equivalent conductance, molecular conductance, effect of dilution on conductance, cell constant. Battery: primary & secondary batteries, Ni-Cd cell, lithium-air battery, fuel cell – H2-O2 cell. Instrumental methods of chemical analysis: basic principle, instrumentation and applications of pH metry, conductometry, thin layer chromatography, gas chromatography, ultraviolet-visible spectroscopy and infra-red spectroscopy." }
+      ],
+      textbooks:[
+        "Jain P.C. & Jain Monica, Engineering Chemistry, Dhanpat Rai & Sons, Delhi.",
+        "O. G. Palanna, Engineering Chemistry, Tata McGraw-Hill Publication, New Delhi.",
+        "S. S. Dara, A Textbook of Engineering Chemistry, McGraw-Hill Publication, New Delhi.",
+        "Shashi Chawla, Engineering Chemistry, Dhanpat Rai and Co Education and Technical Publishers.",
+        "Shikha Agrawal, Engineering Chemistry – Fundamentals and Applications, Cambridge Publishers."
+      ],
+      references:[
+        "Barrow G.M., Physical Chemistry, McGraw-Hill Publication, New Delhi.",
+        "Atkins, Physical Chemistry, OUP Oxford.",
+        "Bhal & Tuli, Textbook of Physical Chemistry, S. Chand & Company, New Delhi.",
+        "V. R. Gowarikar, Polymer Science, New Age International Ltd.",
+        "B. K. Sharma, Instrumental Methods of Chemical Analysis, Krishna Prakashan Media."
+      ],
+      eresources:[
+        "NPTEL Basic Courses – Engineering Chemistry (nptel.ac.in/courses/122/101/122101001/)",
+        "NCERTBooks.guru – Engineering Chemistry",
+        "Coursera Chemistry Courses (Physical Science and Engineering)",
+        "“Introduction to Polymer Physics” – NPTEL course (YouTube)",
+        "“Introduction to Corrosion” – NPTEL course (YouTube)",
+        "“Tribology & Lubrication” – NPTEL course (YouTube)",
+        "“Electrochemistry” – NPTEL course (YouTube)",
+        "“Modern Instrumental Methods of Analysis” – NPTEL course (YouTube)"
+      ]
+    }
+  },
+ 
+  CE: {
+    subjectName: "Communicative English",
+    theory: {
+      label:"Theory",
+      courseCode:"MGM54AEL101",
+      credits:2,
+      teachingScheme:"Theory – 1 hr/week (1+1)",
+      evaluationScheme:"CA – 10, MSE – 10, ESE – 30",
+      prerequisites:["Basic knowledge of English"],
+      objectives:["The course aims at grooming the professional ethics of the students through various personality traits and behavioral patterns focusing on communication skills."],
+      outcomes:[
+        "CO1: To develop communication skills to enhance communication competency.",
+        "CO2: To groom students for adapting professional non-verbal communication.",
+        "CO3: To train students in English syntax and corporate vocabulary.",
+        "CO4: To impart listening and drafting skills through activity-based learning."
+      ],
+      units:[
+        { no:1, title:"Introduction to Communication, Process, Elements and Barriers", hours:5,
+          content:"Introduction to communication, process of communication, elements of communication and barriers to communication." },
+        { no:2, title:"Non-verbal Communication and its Types", hours:3,
+          content:"Kinesics, Oculesics, Appearance, Proxemics, Chronemics, Paralanguage / Para-linguistics." },
+        { no:3, title:"English Grammar", hours:3,
+          content:"Overview of basic mid-level grammar, tenses & concept of time, sentence construction, introduction to corporate vocabulary, difference between formal and informal sentences." },
+        { no:4, title:"Listening Skills and Writing Skills", hours:4,
+          content:"Introduction to listening, importance, types of listening. Importance of writing skills – formal and informal." }
+      ],
+      textbooks:[
+        "Ashraf Rizvi, Communication Skills for Engineers, Tata McGraw Hill.",
+        "Sanjay Kumar, Pushp Lata, Communication Skills, Oxford University Press, 2016.",
+        "Meenakshi Raman, Sangeeta Sharma, Communication Skills, Oxford University Press, 2017.",
+        "Teri Kwal Gamble, Michael Gamble, Communication Works, Tata McGraw Hill Education, 2010."
+      ],
+      references:[
+        "Anderson, Kenneth, Joan Maclean and Tossny Lynch. Study Speaking: A Course in Spoken English for Academic Purposes. Cambridge: CUP, 2004.",
+        "Bellare, Nirmala. Reading Strategies. Vols. 1 and 2. New Delhi: Oxford University Press, 1998.",
+        "Bhasker, W. W. S. & Prabhu, N. S. English through Reading, Vols. 1 and 2. Macmillan, 1975.",
+        "Bovee, Courtland L. and Thill, John V. Business Communication Today. McGraw Hill, New York (1989).",
+        "Murphy, Raymond. Essential English Grammar. Cambridge University Press (2000).",
+        "Hewings, Martin. Advanced English Grammar. Cambridge University Press (2003).",
+        "Bansal, Harrison. Spoken English."
+      ]
+    },
+    lab: {
+      label:"Practical / Lab",
+      courseCode:"Communication Skills Lab",
+      credits:1,
+      teachingScheme:"Practical – 2 hrs/week",
+      evaluationScheme:"CA – 30, End Sem – 20 (Total 50)",
+      prerequisites:["Basic knowledge of English"],
+      objectives:["The course aims at grooming the professional ethics of the students through various personality traits and behavioral patterns focusing on communication skills."],
+      outcomes:[
+        "LO1: Introduce themselves formally and informally with practice.",
+        "LO2: Learn English vowel and consonant sounds for effective pronunciation.",
+        "LO3: Perform effectively in GD, presentation, debate & interviews by participating in mock GD, presentation, extempore and debate.",
+        "LO4: Learn different strategies and the body language needed for professional activities, through mock interviews and sample interviews of leading multinationals.",
+        "LO5: Draft appropriate applications and resume as per professional requirements.",
+        "LO6: Draft the agenda of a meeting along with minutes.",
+        "LO7: Comprehend the meaning of English text using comprehension techniques."
+      ],
+      units:[
+        { no:1, title:"Self Introduction", hours:2, content:"Formal and informal self-introduction (activity)." },
+        { no:2, title:"Introduction to Phonetics", hours:4, content:"Importance of phonetics, vowels and consonants; introduction of vowels (activity / software)." },
+        { no:3, title:"Pronunciation of Consonant Sounds", hours:2, content:"Pronunciation of consonant sounds in English (activity / software)." },
+        { no:4, title:"Group Discussion", hours:4, content:"Group discussion practice (activity / software / video)." },
+        { no:5, title:"Presentation Techniques", hours:4, content:"Presentation techniques (activity / software / video)." },
+        { no:6, title:"Interview Techniques", hours:4, content:"Interview techniques (activity / software / video)." },
+        { no:7, title:"Business / Formal Letters", hours:2, content:"Business and formal letters (activity / software)." },
+        { no:8, title:"Applications", hours:2, content:"Applications and types of applications." },
+        { no:9, title:"Resume Writing", hours:2, content:"Resume writing (activity / software)." },
+        { no:10, title:"Agenda and Minutes of the Meeting", hours:2, content:"Drafting agenda and minutes of the meeting (activity / software)." },
+        { no:11, title:"Skimming & Scanning", hours:2, content:"Skimming and scanning reading techniques (activity / software)." }
+      ]
+    }
+  },
+ 
+  BEEE: {
+    subjectName: "Basics of Electrical & Electronics Engineering",
+    theory: {
+      label:"Theory",
+      courseCode:"APS21PCL101",
+      credits:2,
+      teachingScheme:"Theory – 2 hrs/week",
+      evaluationScheme:"CA – 30, MSE – 30, ESE – 40",
+      prerequisites:[],
+      objectives:[
+        "Understand electrical circuits and classify circuits as per laws.",
+        "Understand magnetic circuits and apply them in transformer device.",
+        "Understand the working of semiconductors.",
+        "Understand the basics of digital electronics.",
+        "Understand the working principle of consumer appliances."
+      ],
+      outcomes:[
+        "CO1: Solve simple DC and single phase AC circuits using KCL, KVL and network theorems.",
+        "CO2: Explain fundamentals of magnetic circuit and transformers.",
+        "CO3: Explain the working of diodes and transistors.",
+        "CO4: Explain the importance of number systems and logic gates.",
+        "CO5: Demonstrate the construction and working of various consumer appliances."
+      ],
+      units:[
+        { no:1, title:"Electrical Circuits", hours:6,
+          content:"Voltage and current sources: independent, dependent, ideal and practical; V-I relationships of resistor, inductor, mutual inductor and capacitor; Kirchhoff’s laws, mesh and nodal analysis, superposition, Thevenin’s, maximum power transfer theorems. Alternating voltages and currents, RMS, average, maximum values, single phase RL, RC, RLC series circuits, power in AC circuits, power factor, three phase balanced systems." },
+        { no:2, title:"Magnetic Circuits & Transformer", hours:6,
+          content:"Concepts of m.m.f, flux, flux density, reluctance, permeability and field strength, their units and relationship, right hand thumb rule and cork screw rule, Faraday’s law of electromagnetic induction, Fleming’s right hand rule, statically and dynamically induced EMFs, self and mutual inductance, coefficient of coupling, energy stored in magnetic circuit. Single phase transformers: construction, principle of working, e.m.f. equations." },
+        { no:3, title:"Semiconductor Devices", hours:6,
+          content:"Introduction to semiconductors, P-type and N-type semiconductors, P-N junction diode: construction and working, V-I characteristics of diode, reverse breakdown mechanism. Special purpose diodes: Zener diode, Light Emitting Diode (LED) and Photodiode – construction, working and applications. Bipolar Junction Transistor (BJT): types, construction and regions of operation." },
+        { no:4, title:"Digital Electronics", hours:6,
+          content:"Binary, decimal, octal, hexadecimal number systems and their inter-conversion, binary addition, binary subtraction, one’s complement, two’s complement, logic gates: basic, universal and special. Boolean laws (AND, OR, NOT) and De Morgan’s theorems, realization of basic logic gates using universal gates." }
+      ],
+      textbooks:[
+        "V. N. Mittal and Arvind Mittal, “Basic Electrical Engineering”, McGraw Hill.",
+        "Edward Hughes, “Electrical Technology”, Pearson Education.",
+        "B. L. Theraja & A. K. Theraja, “Electrical Technology” Vol. 1 & Vol. 4, S. Chand Publications.",
+        "V. K. Mehta, “Principles of Electronics”, S. Chand Publications.",
+        "S. Salivahanan, “Electronic Devices and Circuits”, McGraw Hill Publications.",
+        "R. P. Jain, “Modern Digital Electronics”, McGraw Hill Publications."
+      ],
+      references:[
+        "Vincent Del Toro, “Electrical Engineering Fundamentals”, PHI, second edition 2011.",
+        "Robert Boylestad, “Electronic Devices and Circuits Theory”, Pearson Education India."
+      ],
+      eresources:[
+        "NPTEL online course – “Basic Electrical Engineering”",
+        "NPTEL course – “Introduction to Basic Electronics”, Prof. T. S. Natarajan, IIT Madras",
+        "NPTEL course – “Digital Electronic Circuits”, Prof. Goutam Saha, IIT Kharagpur"
+      ]
+    },
+    lab: {
+      label:"Practical / Lab",
+      credits:1,
+      teachingScheme:"Practical – 2 hrs/week",
+      evaluationScheme:"TW – 30, PR – 20",
+      prerequisites:[],
+      objectives:[
+        "Understand the DC circuit as per KCL & KVL.",
+        "Understand AC circuit as per theorems.",
+        "Understand the working of a single phase transformer.",
+        "Understand the working of electronic instruments.",
+        "Understand the classification of electronic components and logic gates.",
+        "Understand the working of a PN junction diode."
+      ],
+      outcomes:[
+        "LO1: Use KCL & KVL to solve DC circuits.",
+        "LO2: Use AC theorems to solve AC circuits.",
+        "LO3: Demonstrate a single phase transformer and its working.",
+        "LO4: Use electronic instruments for measuring various quantities.",
+        "LO5: Explain the purpose and working of all electronic components as well as various logic gates.",
+        "LO6: Explain the importance and working of PN junction diodes in circuits."
+      ],
+      units:[
+        { no:1, title:"Loop & Nodal Analysis", hours:"\u2014", content:"Verification of Loop Analysis and Nodal Analysis for DC circuits." },
+        { no:2, title:"Thevenin’s Theorem", hours:"\u2014", content:"Verification of Thevenin’s Theorem for DC circuits." },
+        { no:3, title:"Maximum Power Transfer Theorem", hours:"\u2014", content:"Verification of Maximum Power Transfer Theorem for DC circuits." },
+        { no:4, title:"Single Phase AC Circuit", hours:"\u2014", content:"Determination of voltage, current and power flow in a single phase AC circuit including R, L and C with combination." },
+        { no:5, title:"Magnetic Material & EMF Induction", hours:"\u2014", content:"Determination of magnetic material terms and EMF induction." },
+        { no:6, title:"Single-Phase Transformer", hours:"\u2014", content:"Demonstration and determination of single-phase transformer terms like voltage ratio and turns ratio." },
+        { no:7, title:"Electronic Instruments", hours:"\u2014", content:"Study of electronic instruments." },
+        { no:8, title:"Electronic Components", hours:"\u2014", content:"Study of electronic components." },
+        { no:9, title:"Logic Gates", hours:"\u2014", content:"Study of logic gates." },
+        { no:10, title:"PN Junction Diode V-I Characteristics", hours:"\u2014", content:"Study of V-I characteristics of a PN junction diode using V-Lab." },
+        { no:11, title:"Rectifier Circuits", hours:"\u2014", content:"Study of rectifier circuits using EveryCircuit simulation application." },
+        { no:12, title:"Working & Troubleshooting of Devices", hours:"\u2014", content:"Study of working and troubleshooting of smartphone, computer & TV (case study approach)." }
+      ]
+    }
+  },
+ 
+  SMVC: {
+    subjectName: "Single and Multivariable Calculus",
+    theory: {
+      label:"Theory",
+      courseCode:"APS21BSL101",
+      credits:4,
+      teachingScheme:"L – 4 hrs/week",
+      evaluationScheme:"CA – 60, ESE – 40",
+      duration:"2 Hrs (External Exam)",
+      prerequisites:["Pre-university mathematics"],
+      objectives:[
+        "To develop mathematical models using standard functions.",
+        "To determine derivatives of function."
+      ],
+      outcomes:[
+        "CO1: Represent function verbally, numerically, visually, algebraically and formulate a mathematical model using standard functions.",
+        "CO2: Find limit of functions and use limit to find tangents and velocities which give rise to derivative.",
+        "CO3: Trace the Cartesian curve, parametric curve and polar curve. Find arc length, area, volume and surface area using integrals.",
+        "CO4: Solve ordinary differential equations analytically and numerically and apply these methods to solve engineering problems."
+      ],
+      units:[
+        { no:1, title:"Differentiation and its Applications", hours:10,
+          content:"Limit, continuity and differentiation, rate of change in sciences and engineering, chain rule and implicit differentiation, related rates, extreme value theorem, Rolle’s Theorem, Lagrange’s Mean Value theorem, nth derivatives, Taylor and Maclaurin series expansions, linear approximations and differentials." },
+        { no:2, title:"Integration and its Applications", hours:10,
+          content:"Integration, reduction formulae, Beta and Gamma functions, properties, evaluation of integrals using Beta and Gamma functions, application of definite integrals to volume, arc length, surface of revolution, work and fluid forces." },
+        { no:3, title:"Partial Differentiation and its Applications", hours:10,
+          content:"Limit and continuity, partial derivatives of first and higher orders, total differentials, errors and approximations, total derivative, extreme values and saddle points, method of Lagrange multipliers, Jacobians, vector differentiation, gradient, curl and divergence, directional derivatives." },
+        { no:4, title:"Multiple Integrals and its Applications", hours:10,
+          content:"Double integrals, evaluation of double integrals, change of order of integration in double integrals, change of variables (Cartesian to polar), applications: area and volume, root mean square value, center of mass and gravity (constant and variable densities); triple integrals (Cartesian), volume by triple integration." },
+        { no:5, title:"Vector Integration and its Applications", hours:10,
+          content:"Line integrals, surface integrals, Green’s Theorem, Stokes’ Theorem, Divergence theorem." }
+      ],
+      textbooks:[
+        "James Stewart, Calculus Early Transcendental, 7th edition, Cengage.",
+        "George B. Thomas, Ross L. Finney, Calculus and Analytical Geometry, 9th edition, Pearson.",
+        "Howard Anton, Irl Bivens, Stephens Davis, Calculus, 10th Edition, Wiley."
+      ],
+      references:[
+        "Shanti Narayan, Differential Calculus, S. Chand & Co.",
+        "Erwin Kreyszig, Advanced Engineering Mathematics, John Wiley & Sons, New York.",
+        "B. S. Grewal, Higher Engineering Mathematics, Khanna Publishers, New Delhi.",
+        "P. N. Wartikar, J. N. Wartikar, Applied Mathematics (Vol I & II), Pune Vidyarthi Griha Prakashan, Pune.",
+        "H. K. Das and Rajnish Verma, Higher Engineering Mathematics, S. Chand & Co. Pvt. Ltd., New Delhi.",
+        "K. D. Joshi, Calculus for Scientists and Engineers, CRC Press.",
+        "Prasad and Reena Garg, Advanced Engineering Mathematics, Khanna Publishing Company Private Limited, New Delhi."
+      ],
+      eresources:["NPTEL / SWAYAM lectures"]
+    }
+  }
+};
+ 
+/* ---------------------------------------------------------
+   QUESTION BANK — from 04_PIP_NEP_Question_bank_all_chap.pdf
+   Shown as "Question Paper 1" in the Question Papers tab.
+   Add other subjects the same way: QUESTION_BANK.EM = {...}
+   Each question: { q:"text", code:"optional code block" }
+   --------------------------------------------------------- */
+const QUESTION_BANK = {
+  PP: {
+    title: "Question Paper 1 — Question Bank (All Units)",
+    units: [
+      { no:1, title:"Python for Everybody", questions:[
+        { q:'Why are we learning "Python"? Write the advantages.' },
+        { q:'Write installation steps of Python with Anaconda.' },
+        { q:'How to write an input and output statement in Python? Give one example.' },
+        { q:'What is a Keyword? Give 4 examples.' },
+        { q:'What will be the output of the following code?', code:'print(2 | 3)\nprint(1 & 5)' },
+        { q:'What will be the output of the following code?', code:'s = "jay"\np = s * 3\nprint(p)' },
+        { q:'What will be the output of the following code?', code:'print(4 | 3)\nprint(3 & 5)' },
+        { q:'Define Variable. Give 2 examples.' },
+        { q:'What are Operators? Explain any 3 types of Operators with an example.' },
+        { q:'Describe Assignment and Identity operators.' }
+      ]},
+      { no:2, title:"Conditional Loops and Iteration", questions:[
+        { q:'Explain Looping Statements in Python with a proper example.' },
+        { q:'Explain Nested Loop with an example.' },
+        { q:'Write a program to find the factorial of a given number.' },
+        { q:'Write a program to find the Largest Element by using a for loop.' },
+        { q:'What are the loops available? Describe with an example.' },
+        { q:'Create a table of 6 using a for loop and a while loop.' }
+      ]},
+      { no:3, title:"Data Structures in Python", questions:[
+        { q:'What is a String? Explain String functions with one example.' },
+        { q:'Write a Python program to count the number of vowels in a string.' },
+        { q:'What are Dictionaries in Python? Explain with an example.' },
+        { q:'Explain the Set and write a Python program to create set difference, union and intersection.' },
+        { q:'What is a List? Write a Python program to get the largest number from a list.' },
+        { q:'State and explain Tuples. Write a program to reverse a tuple.' },
+        { q:'What is a List? Describe any 4 methods of a List.' },
+        { q:'What is a Set? Describe any 4 methods of a Set.' },
+        { q:'What is a Tuple? Describe any 2 methods of a Tuple.' },
+        { q:'What is a Dictionary? Describe any 2 methods of a Dictionary.' },
+        { q:'What is slicing in a List/Tuple? Give one example.' },
+        { q:'Write the output of the following code.', code:'# 1)\nj = ["Sachin", "Virat", "Rohit"]\nprint(j[-1])\n\n# 2)\nfruits = ["apple", "banana", "cherry"]\nfruits.append("orange")\nprint(fruits)' }
+      ]},
+      { no:4, title:"Functions, Modules and Packages", questions:[
+        { q:'What are Modules and Packages in Python?' },
+        { q:'Explain any two built-in modules.' },
+        { q:'Create a module on Colab. Write the steps.' },
+        { q:'What is a Lambda Function? Explain with an example.' },
+        { q:'What are Functions? What are the types of functions? Give one example.' },
+        { q:'What is a Package?' },
+        { q:'Create a function multi() to multiply three numbers. Pass the values to that function, return the answer, save it in the variable ans and print the multiplication.' },
+        { q:'Create a function add() to add two numbers. Pass the values to that function, return the answer, save it in the variable ans and print the addition.' },
+        { q:'Create a function sub() to subtract three numbers. Pass the values to that function, return the answer, save it in the variable ans and print the subtraction.' }
+      ]},
+      { no:5, title:"Packages in Python for Data Science", questions:[
+        { q:'State the similarities of Array and List.' },
+        { q:'State the differences between List and Array.' },
+        { q:'What is NumPy? State the use of NumPy. State the types of Array.' },
+        { q:'Write a program to perform matrix addition, subtraction and multiplication.' },
+        { q:'What is the Matplotlib library? OR which graphical library is available in Python? Plot any one type of graph using Matplotlib.' },
+        { q:'What is the Pandas library?' },
+        { q:'What is a Binary Search?' },
+        { q:'What is a DataFrame? Write the code to create a DataFrame.' },
+        { q:'What is a Series?' },
+        { q:'What is SQL?' },
+        { q:'What is a Database? What is a CRUD operation in a Database?' }
+      ]}
+    ]
+  }
+};
+ 
+/* ---------------------------------------------------------
+   END SEMESTER PAPERS — Winter 2024-25 (uploaded papers)
+   To add another paper for a subject, push a new object into
+   its array. part = { t:text, m:marks, opts:[...], note:"...", code:"..." }
+   section = { q:"Q.1", intro:"Solve any two", m:marks-for-whole-q, num:true (1. 2. labels) }
+   --------------------------------------------------------- */
+const END_SEM_PAPERS = {
+  PP: [{
+    tag:"WINTER 2024-25", title:"Python Programming — End Semester Exam",
+    meta:["MGM University, Aurangabad","Program: CSE · Semester I","Course Code: APS21ESL101","Marks: 40","Duration: 2 Hrs"],
+    instructions:[
+      "Each question carries 10 marks.",
+      "All questions are compulsory.",
+      "Illustrate your answers with neat sketches, diagram, flowcharts etc. wherever necessary.",
+      "If some part or parameter is noticed to be missing, you may appropriately assume it and should mention it clearly."
+    ],
+    sections:[
+      { q:"Q.1", intro:"Solve any two", parts:[
+        { t:"Write a summary on Operators in Python.", m:5 },
+        { t:"Categorize the below variable names into valid and invalid. Write rules for using variables in Python.", m:5,
+          code:'2myvar = "John"\nmy-var = "John"\nMYVAR = "John"\nmyvar2 = "John"' },
+        { t:"Write a program to simulate a simple calculator (+ - / * %) that takes two operands as input and displays the result.", m:5 }
+      ]},
+      { q:"Q.2", intro:"Solve any two", parts:[
+        { t:"Define the use of range function. Display 1 to 10 numbers using for loop. Enlist the types of looping control structures.", m:5 },
+        { t:"Enlist the types of decision control statements. Write a program to print even and odd number. Take input from the user.", m:5 },
+        { t:"If the ages of three brothers are input through the keyboard, write a program to determine the youngest and oldest of the three.", m:5 }
+      ]},
+      { q:"Q.3", intro:"Solve any two", parts:[
+        { t:"Compare between List and Tuple.", m:5 },
+        { t:"Python program to calculate the number of upper case letters and lower case letters in a string.", m:5 },
+        { t:"Write a function Exchange to interchange the values of two variables, say x and y. Illustrate the use of this function in a calling function.", m:5 }
+      ]},
+      { q:"Q.4", intro:"Solve any two", parts:[
+        { t:"Write a summary on the role of data science in solving real life problems.", m:5 },
+        { t:"Write a program to display a line chart and enlist the packages needed for drawing the chart.", m:5, code:"x = [0, 1, 2, 3, 4, 5]\ny = [0, 1, 2, 3, 4, 5]" },
+        { t:"What is Python Pandas used for? Explain the data structures in Pandas library.", m:5 }
+      ]}
+    ]
+  }],
+ 
+  SMVC: [{
+    tag:"WINTER 2024-25", title:"Single and Multivariable Calculus — End Semester Exam",
+    meta:["MGM University","FY B.Tech (All) NEP","Course Code: APS21BSL101","Max Marks: 40","Duration: 2 Hr"],
+    instructions:[
+      "Each question carries 08 marks.",
+      "Use of non-programmable calculator is allowed.",
+      "Figures to the right indicate full marks."
+    ],
+    sections:[
+      { q:"Q.1", intro:"Solve any two", parts:[
+        { t:"Differentiate: y = (2x + 1)⁵ (x³ − x + 1)⁴.", m:4 },
+        { t:"A farmer has 1200 meter of fencing and wants to fence off a rectangular field that borders a straight river. He needs no fence along the river. What are the dimensions of the field that has the largest area?", m:4 },
+        { t:"Verify Lagrange’s mean value theorem for the function f(x) = √(x − 2) for every x in [2, 3].", m:4 }
+      ]},
+      { q:"Q.2", intro:"Solve any two", parts:[
+        { t:"Evaluate: ∫₀¹ x⁶ √(1 − x²) dx.", m:4 },
+        { t:"Evaluate: ∫₀¹ x³ (1 − √x)⁵ dx.", m:4 },
+        { t:"Show that the surface area of the sphere generated by the revolution of the upper part of the circumference of the circle x² + y² = a² about the x-axis is 4πa².", m:4 }
+      ]},
+      { q:"Q.3", intro:"Solve any two", parts:[
+        { t:"If u = log(x³ + y³ + z³ − 3xyz), prove that (∂/∂x + ∂/∂y + ∂/∂z)² u = −9 / (x + y + z)².", m:4 },
+        { t:"The base radius and height of a right circular cone are measured as 10 cm and 25 cm respectively, with a possible error in measurement of as much as 0.1 cm in each. Use differentials to estimate the maximum error in the calculated volume of the cone.", m:4 },
+        { t:"Find the directional derivative of φ = x²y² + y²z² + z²x² at (1, 1, −2) in the direction of the tangent to the curve x = e⁻ᵗ, y = 1 + 2 sin t, z = t − cos t at t = 0.", m:4 }
+      ]},
+      { q:"Q.4", intro:"Solve any two", parts:[
+        { t:"Evaluate ∬_R xy(x + y) dx dy, where R is the area between the curves y = x² and y = x.", m:4 },
+        { t:"Find the center of mass of a semicircular plate of radius r.", m:4 },
+        { t:"Evaluate: ∫₀^(log 2) ∫₀^x ∫₀^(x+y) e^(x+y+z) dx dy dz.", m:4 }
+      ]},
+      { q:"Q.5", intro:"Solve any two", parts:[
+        { t:"Find the work done by the moving particle in the force field F = y i + z j + x k along the parabola y² = x from the origin to the point 4i + 2j.", m:4 },
+        { t:"Use Green’s theorem to evaluate ∮_C (x² + 2y) dx + (4x − y²) dy, where C is the boundary of the region bounded by y = 0, y = 2x and x + y = 3.", m:4 },
+        { t:"Use the Gauss-Divergence theorem to evaluate ∬_S F·ds, where F = 4x i − 2y² j + z² k and S is the surface bounded by x² + y² = 4, z = 0 and z = 3.", m:4 }
+      ]}
+    ]
+  }],
+ 
+  CE: [{
+    tag:"WINTER 2024", title:"Communicative English — End Semester Examination",
+    meta:["MGM University, Chhatrapati Sambhajinagar","Program: FY B.Tech · Semester I","Course Code: MGM54AEL101","Marks: 20","Duration: 1:00 hr"],
+    instructions:["Attempt all questions.","All questions carry equal marks."],
+    sections:[
+      { q:"Q.1", intro:"Attempt any one question from the given below.", m:5, num:true, parts:[
+        { t:"Define Communication and explain the Process of communication with neat diagram." },
+        { t:"Define any two types of barriers to communication." }
+      ]},
+      { q:"Q.2", intro:"Attempt any one question from the given below.", m:5, num:true, parts:[
+        { t:"Elucidate Non-verbal Communication. Explain the types of non-verbal communication." },
+        { t:"Define the role of body language and paralanguage in effective communication process." }
+      ]},
+      { q:"Q.3", intro:"Do as directed.", m:5, parts:[
+        { t:"My father ________ to give me money to start a new business.", opts:["a) Does not want","b) has not want","c) is not want","d) was not want"] },
+        { t:"Identify the tense in the given sentence: They have been working on the project.", opts:["a) Present Continuous","b) Present Perfect Continuous","c) Past Continuous","d) Future Continuous"] },
+        { t:"My brother eats quickly. (Underline the adverb.)" },
+        { t:"Identify the form of Future Simple Tense from the given below.", opts:[
+          "a) Subject + Will/Shall + Verb (1st form) + Object + (.)",
+          "b) Subject + Will/Shall + Be + Verb (1st form) + Ing + Object + (.)",
+          "c) Subject + Will/Shall + Have + Verb (3rd form) + Object + (.)",
+          "d) Subject + Will/Shall + Have been + Verb (1st form) + Ing + Object + (.)"] },
+        { t:"“As she was not there,” I spoke to her sister. (Identify the type of the underlined clause: “As she was not there”.)" }
+      ]},
+      { q:"Q.4", intro:"Attempt any one question from the given below.", m:5, num:true, parts:[
+        { t:"Write a letter of application to Modern Automobile Factory, Pune 411016 for the post of junior engineer." },
+        { t:"Write a Resume for the post of software engineer." }
+      ]}
+    ]
+  }],
+ 
+  EC: [{
+    tag:"WINTER 2024-25", title:"Engineering Chemistry — End Semester Exam",
+    meta:["MGM University","FY B.Tech (All) · Sem First","Course Code: APS21BSL104","Marks: 40","Time: 02 Hrs"],
+    instructions:[
+      "Each question carries 8 marks.",
+      "All questions are compulsory.",
+      "Illustrate your answers with neat sketches, diagram etc. wherever necessary.",
+      "If some part or parameter is noticed to be missing, you may appropriately assume it and should mention it clearly."
+    ],
+    sections:[
+      { q:"Q.1", intro:"Solve any two", parts:[
+        { t:"What are scale and sludge? Enlist the names of salts responsible for scale & sludge formation in boiler.", m:4 },
+        { t:"A sample of water contains following dissolved salts: Mg(HCO₃)₂ = 15 mg/L, Ca(HCO₃)₂ = 20 mg/L, Mg(OH)₂ = 15 mg/L, CaSO₄ = 25 mg/L. Calculate temporary and total hardness of water.", m:4 },
+        { t:"Define the term dissolved oxygen. Discuss in detail factors affecting DO level.", m:4 }
+      ]},
+      { q:"Q.2", intro:"Solve any two", parts:[
+        { t:"Define the term polymer. Explain the classification of polymers with suitable examples.", m:4 },
+        { t:"How is PMMA prepared? Discuss its important applications.", m:4 },
+        { t:"State the differences between thermoplastic and thermosetting plastics.", m:4 }
+      ]},
+      { q:"Q.3", intro:"Solve any two", parts:[
+        { t:"What is wet corrosion? Describe the mechanism of wet corrosion in neutral medium.", m:4 },
+        { t:"Explain the effect of following factors on rate of corrosion: i) Temperature ii) pH iii) Purity of metal iv) Relative anodic & cathodic area.", m:4 },
+        { t:"Give outlines of various methods used to prevent corrosion of metals.", m:4 }
+      ]},
+      { q:"Q.4", intro:"Solve any two", parts:[
+        { t:"Define the following terms: i) Lubricant ii) Lubrication iii) Flash point iv) Cloud point.", m:4 },
+        { t:"Discuss in detail proximate analysis of coal.", m:4 },
+        { t:"Describe the advantages of liquid fuels over solid fuels.", m:4 }
+      ]},
+      { q:"Q.5", intro:"Solve any two", parts:[
+        { t:"What do you mean by specific conductance and equivalent conductance? What will be the effect of dilution on them?", m:4 },
+        { t:"Differentiate between primary and secondary batteries.", m:4 },
+        { t:"What is pH metric analysis? Give the important applications of pH metry.", m:4 }
+      ]}
+    ]
+  }],
+ 
+  BEEE: [{
+    tag:"2024-25", title:"Basics of Electrical & Electronics Engineering — Semester Exam",
+    meta:["MGM University, Chhatrapati Sambhajinagar - 431003","FY B.Tech ALL NEP · Sem I & II","Course Code: APS21PCL101","Marks: 40","Time: 2 Hrs"],
+    instructions:[
+      "Each question carries 10 marks.",
+      "All questions are compulsory.",
+      "Illustrate your answers with neat sketches, diagrams, etc. wherever necessary."
+    ],
+    sections:[
+      { q:"Q1.", intro:"Solve any two", parts:[
+        { t:"Explain Loop Analysis in detail with suitable example.", m:5 },
+        { t:"In the network shown in the figure, find the value of RL such that the maximum power will be transferred to RL. Also find the value of maximum power.", m:5,
+          note:"Figure (see original paper): 15 V source with 3 Ω, 2 Ω, 3 Ω and 1 Ω resistors and the load RL." },
+        { t:"State and explain Maximum Power Transfer theorem with suitable example in detail.", m:5 }
+      ]},
+      { q:"Q2.", intro:"Solve any two", parts:[
+        { t:"Compare Electric circuit and Magnetic circuit in detail.", m:5 },
+        { t:"Explain the working principle of the transformer in detail.", m:5 },
+        { t:"A single-phase transformer has 400 primary and 1000 secondary turns. The net cross-sectional area of the core is 60 cm². If the primary winding is connected to a 50 Hz supply at 400 V, calculate: 1] the peak value of flux in the core, 2] the voltage induced in the secondary winding.", m:5 }
+      ]},
+      { q:"Q3.", intro:"Solve any two", parts:[
+        { t:"Explain the I-V characteristics of a PN junction diode with a properly labeled sketch.", m:5 },
+        { t:"What is ‘Dark Current’? Explain the working principle of a Photodiode.", m:5 },
+        { t:"What is Doping and why is it required? Classify the semiconductors.", m:5 }
+      ]},
+      { q:"Q4.", intro:"Solve any two", parts:[
+        { t:"Perform the following binary arithmetic operations: (i) Binary addition of A = 10001 and B = 11101. (ii) Subtract B = 1010 from A = 1100.", m:5 },
+        { t:"Convert the hexadecimal number 4CA to its equivalent decimal, binary and octal numbers.", m:5 },
+        { t:"State and prove the De Morgan’s theorems.", m:5 }
+      ]}
+    ]
+  }],
+ 
+  EM: [{
+    tag:"WINTER 2024-25", title:"Engineering Mechanics — End Semester Exam",
+    meta:["MGM University","FY Engineering & Technology · Sem I & II","Course Code: APS21ESL103","Max Marks: 40","Duration: 2 hours"],
+    instructions:[
+      "Each question carries 08 marks.",
+      "All questions are compulsory.",
+      "Illustrate your answers with neat sketches, diagrams etc. wherever necessary.",
+      "If some part or parameter is noticed to be missing, you may appropriately assume it and should mention it clearly."
+    ],
+    sections:[
+      { q:"Q.1", intro:"Solve any TWO", parts:[
+        { t:"State and explain Varignon’s Theorem.", m:4 },
+        { t:"Two forces 100 kN and 200 kN act on a particle and their lines of action are inclined to each other at an angle of 40°. Determine magnitude and direction of the resultant.", m:4 },
+        { t:"Find the resultant of the given force system as shown in the figure.", m:4,
+          note:"Figure (see original paper): concurrent forces 200 N, 250 N, 150 N, 75 N and 100 N about point O, with slopes 3:4 and angles 20° and 50°." }
+      ]},
+      { q:"Q.2", intro:"Solve any TWO", parts:[
+        { t:"State and explain different types of loads and types of support.", m:4 },
+        { t:"A cylinder of weight 300 N is resting on a wall with the help of a chord of length 60 cm. The diameter of the cylinder is 50 cm. Determine the support reaction and tension in the chord.", m:4,
+          note:"Figure (see original paper): cylinder with centre B held against a wall by a chord AC." },
+        { t:"Calculate the support reactions for the beam shown in the figure.", m:4,
+          note:"Figure (see original paper): simply supported beam AB with 4 kN and 1.5 kN point loads and a 2 kN/m UDL; spans of 1.5 m each." }
+      ]},
+      { q:"Q.3", intro:"Solve any TWO", parts:[
+        { t:"Define coefficient of friction and explain coefficient of static and kinetic friction.", m:4 },
+        { t:"A uniform ladder weighing 100 N and 5 meters long has its lower end B resting on the ground and upper end A resting against a vertical wall, as shown in the figure. The inclination of the ladder with the horizontal is 60°. If the coefficient of friction at all surfaces of contact is 0.25, determine how much distance (up along the ladder) a man weighing 600 N can ascend without causing it to slip.", m:4 },
+        { t:"A body of weight 300 N is kept on a rough horizontal plane and a force P is applied to just move the body horizontally, as shown. Find the magnitude of force P required if the coefficient of static friction is 0.4.", m:4,
+          note:"Figure (see original paper): force P applied at 30° to the horizontal." }
+      ]},
+      { q:"Q.4", intro:"Solve any TWO", parts:[
+        { t:"Explain different types of motion.", m:4 },
+        { t:"The figure shows an acceleration–time diagram for a particle moving along the x-axis for a time interval of 0 to 40 sec. For the same time interval plot the V-t diagram and S-t diagram.", m:4,
+          note:"Figure (see original paper): triangular a–t diagram rising from 0 to 12 at t = 20 s and back to 0 at t = 40 s." },
+        { t:"A stone is dropped from the top of a 50 m high tower; at the same time another stone is thrown vertically upward with a velocity of 25 m/s. When and where will the two stones cross each other?", m:4 }
+      ]},
+      { q:"Q.5", intro:"Solve any TWO", parts:[
+        { t:"An 800 N block initially at rest is placed as shown in the figure. If μs = 0.25 and μk = 0.2, determine the acceleration of the block when θ = 20°.", m:4 },
+        { t:"What horizontal force is needed to give an 80 kg block an acceleration of 3 m/s² up the plane?", m:4,
+          note:"Figure (see original paper): block on a 30° inclined plane with horizontal force P." },
+        { t:"A lift of weight 2000 N is to be lifted and lowered by means of a rope. Using D’Alembert’s principle, find the tension in the rope when the lift is:", m:4,
+          opts:["1) Moving upward with an acceleration of 2 m/s²","2) Moving upward with a deceleration of 1.5 m/s²","3) Moving downward with an acceleration of 2 m/s²","4) Moving upward with a deceleration of 1.5 m/s² (as printed in the paper)"] }
+      ]}
+    ]
+  }]
+};
+ 
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const CURRENT_YEAR = new Date().getFullYear();
+ 
+const USERS_KEY = "edubridge_users_v1";
+ 
+let users = {};
+let currentEmail = null;
+let currentRole = null;
+let activeTab = "Subjects";
+let regRole = "student";
+ 
+/* subject detail screen state */
+let subjectDetailCode = null;
+let subjectDetailSection = "theory";
+let subjectDetailChapterIdx = -1; /* -1 = course overview */
+let subjectDetailTab = "Syllabus";
+ 
+/* ---------------- storage helpers ----------------
+   Uses window.storage when available (Claude artifacts),
+   otherwise falls back to localStorage so it also works
+   when you open this file in a normal browser. */
+async function loadUsers(){
+  try{
+    if(window.storage){
+      const res = await window.storage.get(USERS_KEY, false);
+      if(res && res.value) return JSON.parse(res.value);
+      return {};
+    }
+    const raw = localStorage.getItem(USERS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+async function saveUsers(){
+  try{
+    if(window.storage){
+      await window.storage.set(USERS_KEY, JSON.stringify(users), false);
+    } else {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+  }catch(e){ console.error("storage save failed", e); }
+}
+ 
+/* ---------------- utils ---------------- */
+function calcAge(day, monthName, year){
+  const mi = MONTHS.indexOf(monthName);
+  const born = new Date(year, mi, day);
+  const today = new Date();
+  let age = today.getFullYear() - born.getFullYear();
+  const m = today.getMonth() - born.getMonth();
+  if(m < 0 || (m===0 && today.getDate() < born.getDate())) age--;
+  return age;
+}
+function esc(s){ return (s==null?"":s).toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function el(html){ const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
+function render(html){ document.getElementById('app').innerHTML = html; window.scrollTo(0,0); }
+function subjectName(code){ const s = SUBJECTS.find(x => x.code === code); return s ? s.name : code; }
+ 
+function bridgeMark(size=38){
+  return `<svg class="brand-mark" viewBox="0 0 40 40" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="40" height="40" rx="9" fill="#38BDF8"/>
+    <path d="M6 27 L14 15 L20 24 L26 13 L34 27" stroke="#0A1220" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="6" y1="27" x2="34" y2="27" stroke="#0A1220" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>`;
+}
+function trussStrip(){
+  let segs = "";
+  for(let x=0; x<1200; x+=60){
+    segs += `<path d="M${x} 60 L${x+30} 20 L${x+60} 60" stroke="var(--grid-line-strong)" stroke-width="1.5" fill="none"/>`;
+  }
+  return `<svg class="bridge-strip" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0" y1="60" x2="1200" y2="60" stroke="var(--grid-line-strong)" stroke-width="1.5"/>
+    ${segs}
+  </svg>`;
+}
+ 
+function topbar(){
+  const roleLabel = currentRole === "mentor" ? "Mentor" : (currentRole === "student" ? "Student" : "");
+  return `
+  <div class="topbar">
+    <div class="brand">
+      ${bridgeMark(38)}
+      <div>
+        <div class="brand-word">EduBridge</div>
+        <div class="brand-tag">First Year Engineering Portal</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      ${roleLabel ? `<span class="role-chip">${roleLabel}</span>` : ""}
+      ${currentEmail ? `<button class="logout-link" onclick="doLogout()">Log out</button>` : ""}
+    </div>
+  </div>`;
+}
+ 
+/* =========================================================
+   LOGIN
+   ========================================================= */
+function screenLogin(){
+  render(`
+    ${topbar()}
+    <main>
+      <div class="auth-wrap">
+        <div class="auth-hero">
+          <span class="eyebrow">// EDUBRIDGE · FE PORTAL</span>
+          <h1>Structural support for your first year of engineering.</h1>
+          <p>One place for Python, Engineering Mechanics, Engineering Chemistry, Communicative English, BEEE and SMVC — syllabus, notes, tests, assignments and a study assistant that's always awake.</p>
+          <div class="hero-stats">
+            <div class="hero-stat"><b>6</b><span>core subjects</span></div>
+            <div class="hero-stat"><b>24/7</b><span>AI study help</span></div>
+            <div class="hero-stat"><b>1</b><span>place for everything</span></div>
+          </div>
+        </div>
+        <div class="auth-form-side">
+          <div class="auth-card">
+            <h2>Welcome back</h2>
+            <p class="sub">Log in to continue where you left off.</p>
+            <div class="field">
+              <label>Email address</label>
+              <input id="login-email" type="email" placeholder="you@college.edu">
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input id="login-password" type="password" placeholder="••••••••">
+            </div>
+            <div class="error-text" id="login-error"></div>
+            <button class="btn btn-primary btn-full" onclick="doLogin()">Log in</button>
+            <div class="switch-line">Don't have an account? <button onclick="screenRegister()">Create one</button></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  `);
+}
+ 
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  const err = document.getElementById('login-error');
+  if(!email || !password){ err.textContent = "Please enter email and password."; return; }
+  if(!users[email]){ err.textContent = "No account found with this email."; return; }
+  if(users[email].password !== password){ err.textContent = "Incorrect password."; return; }
+  currentEmail = email;
+  currentRole = users[email].role || "student";
+  if(currentRole === "mentor"){ screenMentorDashboard(); return; }
+  if(users[email].university){
+    screenDashboard();
+  } else {
+    screenStudentDetails();
+  }
+}
+ 
+function doLogout(){
+  currentEmail = null;
+  currentRole = null;
+  screenLogin();
+}
+ 
+/* =========================================================
+   REGISTER
+   ========================================================= */
+function screenRegister(){
+  regRole = "student";
+  render(`
+    ${topbar()}
+    <main>
+      <div class="auth-wrap">
+        <div class="auth-hero">
+          <span class="eyebrow">// JOIN EDUBRIDGE</span>
+          <h1>Build your foundation, one semester at a time.</h1>
+          <p>Register as a student to track your progress across all six FE subjects, or as a mentor to guide a batch through the syllabus.</p>
+        </div>
+        <div class="auth-form-side">
+          <div class="auth-card">
+            <h2>Create your account</h2>
+            <p class="sub">Join EduBridge and start your learning journey.</p>
+            <div class="segmented" id="role-seg">
+              <button class="active" onclick="setRegRole('student')">🎓 Student</button>
+              <button onclick="setRegRole('mentor')">🧑‍🏫 Mentor</button>
+            </div>
+            <div class="field"><label>Full name</label><input id="reg-name" placeholder="Your full name"></div>
+            <div class="field"><label>Email</label><input id="reg-email" type="email" placeholder="you@college.edu"></div>
+            <div class="field"><label>Password</label><input id="reg-password" type="password" placeholder="At least 6 characters"></div>
+            <div class="field"><label>Confirm password</label><input id="reg-confirm" type="password" placeholder="Re-enter password"></div>
+            <div class="error-text" id="reg-error"></div>
+            <button class="btn btn-primary btn-full" onclick="doRegister()">Create account</button>
+            <div class="switch-line">Already have an account? <button onclick="screenLogin()">Log in</button></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  `);
+}
+ 
+function setRegRole(role){
+  regRole = role;
+  const btns = document.querySelectorAll('#role-seg button');
+  btns[0].classList.toggle('active', role==='student');
+  btns[1].classList.toggle('active', role==='mentor');
+}
+ 
+async function doRegister(){
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const password = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  const err = document.getElementById('reg-error');
+ 
+  if(!name || !email || !password || !confirm){ err.textContent = "Please fill in all fields."; return; }
+  const emailPattern = /^[\w.-]+@[\w.-]+\.\w+$/;
+  if(!emailPattern.test(email)){ err.textContent = "Please enter a valid email address."; return; }
+  if(password.length < 6){ err.textContent = "Password must contain at least 6 characters."; return; }
+  if(password !== confirm){ err.textContent = "Passwords do not match."; return; }
+  if(users[email]){ err.textContent = "This email is already registered."; return; }
+ 
+  if(regRole === "mentor"){
+    users[email] = { name, password, role:"mentor", department:"" };
+  } else {
+    const progress = {};
+    SUBJECTS.forEach(s => progress[s.code] = 0);
+    users[email] = {
+      name, password, role:"student",
+      dob:"", age:"", class:"", university:"", college:"", department:"", course:"", semester:"",
+      subjectProgress: progress,
+      progress: { study_hours:0, videos_watched:0, assignments_done:0, courses_completed:0 },
+      assignmentsChecked: {}
+    };
+  }
+  await saveUsers();
+  alert("Your EduBridge account has been created! Please log in.");
+  screenLogin();
+}
+ 
+/* =========================================================
+   STUDENT ACADEMIC PROFILE SETUP
+   ========================================================= */
+function screenStudentDetails(){
+  const u = users[currentEmail];
+  const dayOpts = Array.from({length:31},(_,i)=>i+1).map(d=>`<option value="${d}">${d}</option>`).join("");
+  const monthOpts = MONTHS.map(m=>`<option value="${m}">${m}</option>`).join("");
+  const yearOpts = Array.from({length:50},(_,i)=>CURRENT_YEAR-10-i).map(y=>`<option value="${y}">${y}</option>`).join("");
+ 
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// STEP 1 OF 1</span>
+          <h1>Welcome, ${esc(u.name)} 🎓</h1>
+          <p>Let's set up your academic profile before you enter the portal.</p>
+        </div>
+        <div class="panel" style="padding:32px; max-width:820px; margin-bottom:60px;">
+          <div class="field-row">
+            <div class="field"><label>Name</label><input id="sd-name" value="${esc(u.name)}"></div>
+            <div class="field"><label>Email</label><input value="${esc(currentEmail)}" disabled></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Date of birth</label>
+              <div class="field-row">
+                <select id="sd-day" onchange="previewAge()"><option value="">Day</option>${dayOpts}</select>
+                <select id="sd-month" onchange="previewAge()"><option value="">Month</option>${monthOpts}</select>
+                <select id="sd-year" onchange="previewAge()"><option value="">Year</option>${yearOpts}</select>
+              </div>
+            </div>
+            <div class="field" style="max-width:120px;">
+              <label>Age (auto)</label>
+              <div id="sd-age-preview" style="font-family:var(--display); font-size:26px; color:var(--cyan-soft); padding-top:6px;">--</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Class / roll</label><input id="sd-class" placeholder="e.g. FE-A-14"></div>
+            <div class="field"><label>University</label><input id="sd-university" placeholder="e.g. Savitribai Phule Pune University"></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>College</label>
+              <select id="sd-college">
+                <option value="">Select college</option>
+                <option>JNEC</option><option>IICT</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Department</label>
+              <select id="sd-department">
+                <option value="">Select department</option>
+                <option>Computer Science &amp; Engineering (CSE)</option>
+                <option>Information Technology (IT)</option>
+                <option>Electronics &amp; Telecommunication (ENTC)</option>
+                <option>Mechanical Engineering</option>
+                <option>Civil Engineering</option>
+                <option>Artificial Intelligence &amp; Machine Learning</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Course</label>
+              <select id="sd-course">
+                <option value="">Select course</option>
+                <option>B.Tech</option><option>B.E.</option><option>B.Sc.</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Semester</label>
+              <select id="sd-semester">
+                <option value="">Select semester</option>
+                ${Array.from({length:8},(_,i)=>`<option>Semester ${i+1}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <div class="error-text" id="sd-error"></div>
+          <button class="btn btn-primary" onclick="saveStudentDetails()">Save profile →</button>
+        </div>
+      </div>
+    </main>
+  `);
+}
+ 
+function previewAge(){
+  const day = document.getElementById('sd-day').value;
+  const month = document.getElementById('sd-month').value;
+  const year = document.getElementById('sd-year').value;
+  const out = document.getElementById('sd-age-preview');
+  if(!day || !month || !year){ out.textContent = "--"; return; }
+  out.textContent = calcAge(parseInt(day), month, parseInt(year));
+}
+ 
+async function saveStudentDetails(){
+  const name = document.getElementById('sd-name').value.trim();
+  const day = document.getElementById('sd-day').value;
+  const month = document.getElementById('sd-month').value;
+  const year = document.getElementById('sd-year').value;
+  const studentClass = document.getElementById('sd-class').value.trim();
+  const university = document.getElementById('sd-university').value.trim();
+  const college = document.getElementById('sd-college').value;
+  const department = document.getElementById('sd-department').value;
+  const course = document.getElementById('sd-course').value;
+  const semester = document.getElementById('sd-semester').value;
+  const err = document.getElementById('sd-error');
+ 
+  if(!name){ err.textContent = "Please enter your name."; return; }
+  if(!day || !month || !year){ err.textContent = "Please select your complete date of birth."; return; }
+  const age = calcAge(parseInt(day), month, parseInt(year));
+  if(age < 0){ err.textContent = "Please select a valid date of birth."; return; }
+  if(!studentClass){ err.textContent = "Please enter your class."; return; }
+  if(!university){ err.textContent = "Please enter your university."; return; }
+  if(!college){ err.textContent = "Please select your college."; return; }
+  if(!department){ err.textContent = "Please select your department."; return; }
+  if(!course){ err.textContent = "Please select your course."; return; }
+  if(!semester){ err.textContent = "Please select your semester."; return; }
+ 
+  const u = users[currentEmail];
+  u.name = name;
+  u.dob = `${String(day).padStart(2,'0')}-${month}-${year}`;
+  u.age = age;
+  u.class = studentClass;
+  u.university = university;
+  u.college = college;
+  u.department = department;
+  u.course = course;
+  u.semester = semester;
+ 
+  await saveUsers();
+  screenDashboard();
+}
+ 
+/* =========================================================
+   STUDENT DASHBOARD
+   ========================================================= */
+function screenDashboard(){
+  const u = users[currentEmail];
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// DASHBOARD</span>
+          <h1>Welcome back, ${esc(u.name)} 🎓</h1>
+          <p>${esc(u.department||"")} · ${esc(u.semester||"")}</p>
+        </div>
+        <div class="bento">
+          <div class="bento-card span-3" onclick="screenCourses()">
+            <span class="ic">📚</span><h3>Courses &amp; syllabus</h3><p>Open a subject to see its syllabus</p>
+          </div>
+          <div class="bento-card span-3" onclick="screenStudyMaterial()">
+            <span class="ic">📖</span><h3>Study material</h3><p>Notes, videos and PDFs by subject</p>
+          </div>
+          <div class="bento-card span-2" onclick="screenAssignments()">
+            <span class="ic">📝</span><h3>Assignments</h3><p>Track what's due per subject</p>
+          </div>
+          <div class="bento-card span-2" onclick="screenAI()">
+            <span class="ic">🤖</span><h3>AI assistant</h3><p>Ask a question, get an answer</p>
+          </div>
+          <div class="bento-card span-2" onclick="screenProgress()">
+            <span class="ic">📊</span><h3>Progress</h3><p>See how your semester is going</p>
+          </div>
+                    <div class="bento-card span-3" onclick="screenProfile()">
+            <span class="ic">👤</span><h3>Profile</h3><p>${esc(u.college||"")} · ${esc(u.course||"")} · Roll ${esc(u.class||"")}</p>
+          </div>
+          <div class="bento-card span-3" onclick="screenInterviewHome()">
+            <span class="ic">💼</span><h3>Interview preparation</h3><p>SQL, Python and HR questions with answers</p>
+          </div>
+      </div>
+    </main>
+  `);
+}
+ 
+/* =========================================================
+   MENTOR DASHBOARD
+   ========================================================= */
+function screenMentorDashboard(){
+  const u = users[currentEmail];
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// MENTOR DASHBOARD</span>
+          <h1>Welcome, Mentor ${esc(u.name)} 🧑‍🏫</h1>
+          <p>Manage your students and the FE study material.</p>
+        </div>
+        <div class="bento">
+          <div class="bento-card span-3" onclick="mentorViewStudents()">
+            <span class="ic">👥</span><h3>My students</h3><p>View everyone registered as a student</p>
+          </div>
+          <div class="bento-card span-3" onclick="screenStudyMaterial()">
+            <span class="ic">📖</span><h3>Study material</h3><p>Review subject-wise material</p>
+          </div>
+          <div class="bento-card span-3" onclick="mentorPostAnnouncement()">
+            <span class="ic">📢</span><h3>Announcements</h3><p>Post an update to the batch</p>
+          </div>
+          <div class="bento-card span-3" onclick="mentorManageTests()">
+            <span class="ic">📝</span><h3>Test series</h3><p>Manage subject tests</p>
+          </div>
+          <div class="bento-card span-6" onclick="mentorViewFeedback()">
+            <span class="ic">📬</span><h3>Feedback box</h3><p>Read feedback, reviews and complaints from students</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  `);
+}
+ 
+function mentorViewStudents(){
+  const students = Object.values(users).filter(u => u.role === "student");
+  const rows = students.length ? students.map(s => `
+    <div class="mentor-student-row">
+      <div><b>${esc(s.name)}</b><div style="font-size:12px;color:var(--text-dim);">${esc(s.course||"—")} · ${esc(s.semester||"—")}</div></div>
+      <span class="badge-mono">${esc(s.college||"—")}</span>
+    </div>`).join("") : `<p style="color:var(--text-dim);padding:20px;">No students have registered yet.</p>`;
+ 
+  showModal("My students", `<div class="mentor-list">${rows}</div>`, [{label:"Close", cls:"btn-ghost", action:closeModal}]);
+}
+function mentorPostAnnouncement(){
+  alert("Announcement posting can be connected here — add a text box and save it to the shared announcements feed for a full implementation.");
+}
+function mentorManageTests(){
+  alert("Test creation and management can be connected here.");
+}
+ 
+/* =========================================================
+   COURSES
+   ========================================================= */
+function screenCourses(){
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// CATALOGUE</span>
+          <h1>Courses</h1>
+          <p>Pick a subject to open its syllabus, notes and videos.</p>
+        </div>
+        <div class="bento">
+          ${SUBJECTS.map(s => `
+            <div class="bento-card span-2" onclick="openSubjectDetail('${s.code}')">
+              <span class="ic">${s.icon}</span><h3>${esc(s.name)}</h3><p>${SYLLABUS_DATA[s.code] ? "Open syllabus" : "Syllabus coming soon"}</p>
+            </div>`).join("")}
+        </div>
+        <button class="btn btn-ghost" onclick="backToDashboard()">← Back to dashboard</button>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+}
+ 
+/* =========================================================
+   SUBJECT DETAIL — chapters sidebar + Syllabus / PDF Notes /
+   Question Papers / YouTube Videos tabs
+   ========================================================= */
+function openSubjectDetail(code){
+  subjectDetailCode = code;
+  subjectDetailSection = "theory";
+  subjectDetailChapterIdx = -1;
+  subjectDetailTab = "Syllabus";   /* syllabus opens first */
+  screenSubjectDetail();
+}
+ 
+function screenSubjectDetail(){
+  const code = subjectDetailCode;
+  const name = subjectName(code);
+  const data = SYLLABUS_DATA[code];
+ 
+  render(`
+    ${topbar()}
+    <main>
+      <div class="subject-hero">
+        <div class="container-fluid subject-hero-inner">
+          <div>
+            <div class="subject-code-lg">${esc(code)}</div>
+            <h1>${esc(name)}</h1>
+            <div class="meta">
+              <span>📘 ${data ? data.theory.units.length + " theory units" : "Syllabus coming soon"}</span>
+              ${data && data.lab ? `<span>🧪 ${data.lab.units.length} practical units</span>` : ""}
+              <span>🎓 NEP · Semester I</span>
+            </div>
+          </div>
+        </div>
+        ${trussStrip()}
+      </div>
+      <div class="container-fluid">
+        <div class="subject-detail-layout">
+          <div class="chapter-sidebar" id="chapter-sidebar"></div>
+          <div class="subject-main">
+            <div class="subject-tabbar" id="subject-tabbar"></div>
+            <div id="subject-tab-content"></div>
+          </div>
+        </div>
+        <div class="subject-back">
+          <button class="btn btn-ghost" onclick="screenCourses()">← Back to courses</button>
+        </div>
+      </div>
+    </main>
+  `);
+ 
+  renderChapterSidebar();
+  renderSubjectTabbar();
+  renderSubjectTabContent();
+}
+ 
+function renderChapterSidebar(){
+  const data = SYLLABUS_DATA[subjectDetailCode];
+  const host = document.getElementById('chapter-sidebar');
+  const sectionHtml = (sectionKey) => {
+    const sec = data[sectionKey];
+    if(!sec) return "";
+    return `
+      <div class="chapter-group-label">${esc(sec.label).toUpperCase()}</div>
+      ${sec.units.map((u,i) => `
+        <div class="chapter-item ${subjectDetailSection===sectionKey && subjectDetailChapterIdx===i ? 'active':''}" onclick="selectChapter('${sectionKey}', ${i})">
+          <span class="chip">CH-${String(u.no).padStart(2,'0')}</span>
+          <span class="ctitle">${esc(u.title)}</span>
+        </div>`).join("")}
+    `;
+  };
+  host.innerHTML = `
+    <div class="chapter-sidebar-title">ALL CHAPTERS</div>
+    <div class="chapter-item ${subjectDetailChapterIdx===-1 ? 'active':''}" onclick="selectChapter('overview', -1)">
+      <span class="chip">ℹ️</span>
+      <span class="ctitle">Course Overview</span>
+    </div>
+    ${data ? sectionHtml('theory') + sectionHtml('lab') : ""}
+  `;
+}
+ 
+function selectChapter(sectionKey, idx){
+  subjectDetailSection = sectionKey === 'overview' ? 'theory' : sectionKey;
+  subjectDetailChapterIdx = idx;
+  renderChapterSidebar();
+  renderSubjectTabContent();
+}
+ 
+function renderSubjectTabbar(){
+  const tabs = ["Syllabus","PDF Notes","Question Papers","YouTube Videos"];
+  const host = document.getElementById('subject-tabbar');
+  host.innerHTML = tabs.map(t => `<button class="${t===subjectDetailTab?'active':''}" onclick="switchSubjectTab('${t}')">${t}</button>`).join("");
+}
+ 
+function switchSubjectTab(tab){
+  subjectDetailTab = tab;
+  document.querySelectorAll('.subject-tabbar button').forEach(b => b.classList.toggle('active', b.textContent === tab));
+  renderSubjectTabContent();
+}
+ 
+function currentChapter(){
+  const data = SYLLABUS_DATA[subjectDetailCode];
+  if(!data || subjectDetailChapterIdx === -1) return null;
+  return data[subjectDetailSection].units[subjectDetailChapterIdx];
+}
+ 
+/* Question bank block for the Question Papers tab.
+   If a theory chapter is selected, only that unit's questions show. */
+function questionBankHtml(){
+  const bank = QUESTION_BANK[subjectDetailCode];
+  if(!bank) return "";
+  const chapter = currentChapter();
+  const onlyUnit = (chapter && subjectDetailSection === "theory") ? chapter.no : null;
+  const units = bank.units.filter(u => onlyUnit === null || u.no === onlyUnit);
+  const total = units.reduce((n,u) => n + u.questions.length, 0);
+  return `
+    <div class="qb-title-row">
+      <div class="qp-icon">📝</div>
+      <div><b>${esc(bank.title)}</b><small>${units.length} ${units.length===1?"unit":"units"} · ${total} questions${onlyUnit!==null ? " · select Course Overview to see all units" : ""}</small></div>
+    </div>
+    ${units.map(u => `
+      <div class="qb-card">
+        <div class="qb-head"><span class="badge-mono">UNIT ${u.no}</span><h4>${esc(u.title)}</h4></div>
+        <ol class="qb-list">
+          ${u.questions.map(x => `
+            <li>${esc(x.q)}${x.code ? `<pre class="qb-code">${esc(x.code)}</pre>` : ""}</li>`).join("")}
+        </ol>
+      </div>`).join("")}
+    <div style="height:14px;"></div>
+  `;
+}
+ 
+/* End-semester papers for the Question Papers tab (collapsible cards) */
+function endSemPapersHtml(){
+  const list = END_SEM_PAPERS[subjectDetailCode];
+  if(!list || !list.length) return "";
+  const marks = m => m ? `<span class="paper-marks">[${esc(m)}]</span>` : "";
+  return `
+    <div class="qb-title-row">
+      <div class="qp-icon">🎓</div>
+      <div><b>End Semester Papers</b><small>${list.length} paper${list.length>1?"s":""} · click a paper to open it</small></div>
+    </div>
+    ${list.map((p,i) => `
+      <details class="paper-card" ${i===0 ? "open" : ""}>
+        <summary><span class="badge-mono">${esc(p.tag)}</span><span>${esc(p.title)}</span></summary>
+        <div class="paper-body">
+          <div class="paper-meta">${p.meta.map(m => `<span class="doc-meta-pill">${esc(m)}</span>`).join("")}</div>
+          <div class="paper-inst-title">INSTRUCTIONS</div>
+          <ol class="doc-list">${p.instructions.map(x => `<li>${esc(x)}</li>`).join("")}</ol>
+          ${p.sections.map(sec => `
+            <div class="paper-q">
+              <div class="paper-q-head"><b>${esc(sec.q)}</b><span>${esc(sec.intro)}</span>${marks(sec.m)}</div>
+              ${sec.parts.map((pt,j) => `
+                <div class="paper-part">
+                  <span class="pl">${sec.num ? (j+1)+"." : String.fromCharCode(97+j)+")"}</span>
+                  <div class="pt">
+                    ${esc(pt.t)}
+                    ${pt.opts ? `<ul class="paper-opts">${pt.opts.map(o => `<li>${esc(o)}</li>`).join("")}</ul>` : ""}
+                    ${pt.code ? `<pre class="qb-code">${esc(pt.code)}</pre>` : ""}
+                    ${pt.note ? `<div class="paper-note">📐 ${esc(pt.note)}</div>` : ""}
+                  </div>
+                  ${marks(pt.m)}
+                </div>`).join("")}
+            </div>`).join("")}
+        </div>
+      </details>`).join("")}
+    <div style="height:14px;"></div>
+  `;
+}
+ 
+function pendingBox(what){
+  return `
+    <div class="pending-box">
+      <span class="ic">🛠️</span>
+      <b>${esc(what)} for ${esc(subjectName(subjectDetailCode))} hasn't been added yet.</b><br>
+      Add this subject's syllabus to <code>SYLLABUS_DATA</code> in the code and it will appear here automatically.
+    </div>`;
+}
+ 
+function renderSubjectTabContent(){
+  const host = document.getElementById('subject-tab-content');
+  const data = SYLLABUS_DATA[subjectDetailCode];
+  const chapter = currentChapter();
+  const name = subjectName(subjectDetailCode);
+ 
+  if(subjectDetailTab === "Syllabus"){
+    if(!data){ host.innerHTML = pendingBox("The syllabus"); return; }
+    if(!chapter){
+      /* Course overview: theory + lab course info */
+      host.innerHTML = ['theory','lab'].filter(k => data[k]).map(key => {
+        const sec = data[key];
+        const sub = (t, m) => `<p style="color:var(--text-hi); font-weight:600; font-size:13.5px; margin:${m} 0 8px 0;">${t}</p>`;
+        const olist = (t, arr, m) => (arr && arr.length) ? sub(t, m) + `<ol class="doc-list">${arr.map(o => `<li>${esc(o)}</li>`).join("")}</ol>` : "";
+        const pills = [["Code",sec.courseCode],["Credits",sec.credits],["Scheme",sec.teachingScheme],["Evaluation",sec.evaluationScheme],["Duration",sec.duration]]
+          .filter(([k,v]) => v !== undefined && v !== null && v !== "")
+          .map(([k,v]) => `<span class="doc-meta-pill">${k}: ${esc(v)}</span>`).join("");
+        return `
+        <div class="doc-card">
+          <h4>${esc(sec.label)} — Course Syllabus</h4>
+          ${sec.note ? `<div class="paper-note" style="margin:0 0 16px 0;">ℹ️ ${esc(sec.note)}</div>` : ""}
+          ${pills ? `<div class="doc-meta-row">${pills}</div>` : ""}
+          ${sec.prerequisites && sec.prerequisites.length ? `<p style="color:var(--text-mid); font-size:13px; margin:0 0 14px 0;"><b>Prerequisites:</b> ${sec.prerequisites.map(x => esc(x)).join("; ")}</p>` : ""}
+          ${olist("Course Objectives", sec.objectives, "0")}
+          ${olist("Course Outcomes", sec.outcomes, "16px")}
+          ${sub("Unit-wise Contents", "16px")}
+          <ul class="doc-list" style="list-style:none; padding-left:0;">${sec.units.map(u => `<li style="margin-bottom:8px;"><b>Unit ${esc(u.no)}: ${esc(u.title)}</b> ${u.hours!=="\u2014" ? `(${esc(u.hours)} hrs)` : ""} — ${esc(u.content)}</li>`).join("")}</ul>
+          ${olist("Text Books", sec.textbooks, "16px")}
+          ${olist("Reference Books", sec.references, "16px")}
+          ${olist("E-Resources", sec.eresources, "16px")}
+        </div>`;
+      }).join("");
+    } else {
+      host.innerHTML = `
+        <div class="doc-card">
+          <span class="doc-meta-pill" style="margin-bottom:10px; display:inline-block;">${esc(data[subjectDetailSection].label)} · Unit ${chapter.no}</span>
+          <div class="doc-unit-title">${esc(chapter.title)}</div>
+          ${chapter.hours!=="\u2014" ? `<span class="doc-unit-hours">⏱ ${esc(chapter.hours)} teaching hours</span>` : ""}
+          <p class="desc-text" style="margin-top:10px;">${esc(chapter.content)}</p>
+        </div>
+      `;
+    }
+  } else if(subjectDetailTab === "PDF Notes"){
+    if(!data){ host.innerHTML = pendingBox("PDF notes"); return; }
+    const items = chapter ? [chapter] : [...data.theory.units];
+    host.innerHTML = items.map(u => `
+      <div class="lecture-card">
+        <div class="lecture-thumb">📄</div>
+        <div class="lecture-info">
+          <div class="kind">PDF Notes · Unit ${u.no}</div>
+          <div class="title">${esc(u.title)}</div>
+          <div class="lecture-actions">
+            <button class="btn btn-primary btn-sm" onclick="alert('Add the PDF link for Unit ${u.no} here to connect this button to a real file.')">📥 Download PDF</button>
+          </div>
+        </div>
+      </div>`).join("");
+  } else if(subjectDetailTab === "Question Papers"){
+    const papers = [];
+    host.innerHTML = endSemPapersHtml() + questionBankHtml() + papers.map(p => `
+      <div class="qp-row">
+        <div class="left">
+          <div class="qp-icon">📝</div>
+          <span>${esc(p)}</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="alert('Add the question paper link here to connect this button to a real file.')">View</button>
+      </div>`).join("");
+  } else if(subjectDetailTab === "YouTube Videos"){
+    if(!data){
+      /* no unit list yet — offer a general search for the subject */
+      const q = encodeURIComponent(`${name} first year engineering`);
+      host.innerHTML = `
+        <div class="lecture-card">
+          <div class="lecture-thumb">▶️<span class="play-dot">▶</span></div>
+          <div class="lecture-info">
+            <div class="kind">Lectures</div>
+            <div class="title">${esc(name)} — full course lectures</div>
+            <div class="lecture-actions">
+              <a class="btn btn-primary btn-sm" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Search on YouTube</a>
+            </div>
+          </div>
+        </div>`;
+      return;
+    }
+    const items = chapter ? [chapter] : [...data.theory.units];
+    host.innerHTML = items.map(u => {
+      const query = encodeURIComponent(`${name} ${u.title}`);
+      return `
+      <div class="lecture-card">
+        <div class="lecture-thumb">▶️<span class="play-dot">▶</span></div>
+        <div class="lecture-info">
+          <div class="kind">Lecture · Unit ${u.no}</div>
+          <div class="title">${esc(u.title)}</div>
+          <div class="lecture-actions">
+            <a class="btn btn-primary btn-sm" href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener">▶ Watch on YouTube</a>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+}
+ 
+/* =========================================================
+   STUDY MATERIAL — batch overview style
+   ========================================================= */
+function screenStudyMaterial(){
+  activeTab = "Subjects";
+  renderStudyMaterialShell();
+}
+ 
+function renderStudyMaterialShell(){
+  const tabs = ["Description","Subjects","Resources","Tests","Announcements"];
+  render(`
+    ${topbar()}
+    <main>
+      <div class="batch-banner">
+        <div class="container batch-banner-inner">
+          <div>
+            <span class="eyebrow">// FIRST YEAR ENGINEERING · 2027 BATCH</span>
+            <h1>Python, Engg. Mechanics, Engg. Chemistry, Communicative English, BEEE &amp; SMVC</h1>
+            <div class="meta">
+              <span>📘 6 subjects</span>
+              <span>🎥 Lectures + DPPs</span>
+              <span>📝 Unit tests</span>
+            </div>
+          </div>
+        </div>
+        ${trussStrip()}
+      </div>
+      <div class="tabbar">
+        <div class="container tabbar-inner">
+          ${tabs.map(t => `<button class="tab-btn ${t===activeTab?'active':''}" onclick="switchMaterialTab('${t}')">${t}</button>`).join("")}
+        </div>
+      </div>
+      <div class="info-strip" id="info-strip">
+        <div class="container info-strip-inner">
+          <span>Click any subject to open its syllabus, notes, question papers and videos.</span>
+          <button onclick="document.getElementById('info-strip').style.display='none'">✕</button>
+        </div>
+      </div>
+      <div class="material-body">
+        <div class="container" id="material-content"></div>
+      </div>
+      <div class="container">
+        <button class="btn btn-ghost" onclick="backToDashboard()">← Back to dashboard</button>
+      </div>
+      <div style="height:40px;"></div>
+    </main>
+  `);
+  renderMaterialTabContent();
+}
+ 
+function switchMaterialTab(tab){
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === tab));
+  renderMaterialTabContent();
+}
+ 
+function renderMaterialTabContent(){
+  const host = document.getElementById('material-content');
+  if(activeTab === "Description"){
+    host.innerHTML = `<p class="desc-text">This portal covers all six First Year Engineering subjects — Python Programming, Engineering Mechanics, Engineering Chemistry, Communicative English, BEEE and SMVC — with the official syllabus, notes, videos and question papers for every subject. Mark material as complete as you go, and your progress will roll up into your dashboard automatically.</p>`;
+  } else if(activeTab === "Subjects"){
+    const u = users[currentEmail] || {};
+    const progress = u.subjectProgress || {};
+    host.innerHTML = `<div class="subject-grid">
+      ${SUBJECTS.map(s => {
+        const pct = progress[s.code] || 0;
+        return `
+        <div class="subject-card" onclick="openSubject('${s.code}')">
+          <div class="subject-code">${s.code}</div>
+          <div class="subject-info">
+            <div class="name">${esc(s.name)}</div>
+            <div class="prog-row">
+              <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+              <div class="prog-pct">${pct}%</div>
+            </div>
+          </div>
+          <div class="chevron">›</div>
+        </div>`;
+      }).join("")}
+    </div>`;
+  } else if(activeTab === "Resources"){
+    const resources = ["📄 Lecture notes (PDF) — all subjects","📊 Formula &amp; reference sheets","🗂️ Reference textbooks","🔗 Curated external links"];
+    host.innerHTML = resources.map(r => `<div class="list-row"><div class="left"><span class="dot"></span><span>${r}</span></div></div>`).join("");
+  } else if(activeTab === "Tests"){
+    const tests = SUBJECTS.map(s => `${s.name} — Unit Test`);
+    host.innerHTML = tests.map(t => `
+      <div class="list-row">
+        <div class="left"><span class="dot"></span><span>${esc(t)}</span></div>
+        <button class="btn btn-primary btn-sm" onclick="alert('${esc(t)} can be connected here.')">Start</button>
+      </div>`).join("");
+  } else if(activeTab === "Announcements"){
+    const anns = [
+      ["Today","New Python lecture on functions and recursion has been added."],
+      ["2 days ago","Engineering Mechanics assignment deadline moved to next Friday."],
+      ["1 week ago","BEEE unit test scheduled for next Monday — syllabus posted under Resources."]
+    ];
+    host.innerHTML = anns.map(([d,t]) => `<div class="announcement-row"><div class="date">${d}</div>${esc(t)}</div>`).join("");
+  }
+}
+ 
+function openSubject(code){
+  openSubjectDetail(code);
+}
+ 
+async function bumpSubjectProgress(code){
+  const u = users[currentEmail];
+  u.subjectProgress = u.subjectProgress || {};
+  u.subjectProgress[code] = Math.min(100, (u.subjectProgress[code] || 0) + 10);
+  await saveUsers();
+  closeModal();
+  renderMaterialTabContent();
+}
+ 
+/* =========================================================
+   ASSIGNMENTS
+   ========================================================= */
+function screenAssignments(){
+  const u = users[currentEmail];
+  const assignments = SUBJECTS.map(s => ({ key:s.code, label:`${s.name} — Assignment 1` }));
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// TO-DO</span>
+          <h1>Assignments</h1>
+          <p>Check off assignments as you complete them.</p>
+        </div>
+        <div style="max-width:640px;">
+          ${assignments.map(a => `
+            <div class="assign-row">
+              <input type="checkbox" id="assign-${a.key}" ${u.assignmentsChecked && u.assignmentsChecked[a.key] ? "checked" : ""}>
+              <label for="assign-${a.key}" class="name">${esc(a.label)}</label>
+              <span class="subject-tag">${a.key}</span>
+            </div>`).join("")}
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="saveAssignments()">Save progress</button>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:22px;" onclick="backToDashboard()">← Back to dashboard</button>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+}
+ 
+async function saveAssignments(){
+  const u = users[currentEmail];
+  u.assignmentsChecked = u.assignmentsChecked || {};
+  let doneCount = 0;
+  SUBJECTS.forEach(s => {
+    const checked = document.getElementById(`assign-${s.code}`).checked;
+    u.assignmentsChecked[s.code] = checked;
+    if(checked) doneCount++;
+  });
+  u.progress = u.progress || {};
+  u.progress.assignments_done = doneCount;
+  await saveUsers();
+  alert("Assignment progress updated successfully!");
+}
+ 
+/* =========================================================
+   AI ASSISTANT
+   ========================================================= */
+function screenAI(){
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// STUDY HELP</span>
+          <h1>EduBridge AI assistant</h1>
+          <p>Ask about Python, Engineering Mechanics, Engineering Chemistry, Communicative English, BEEE or SMVC.</p>
+        </div>
+        <div class="chat-shell">
+          <div class="chat-log" id="chat-log"></div>
+          <div class="chat-input-bar">
+            <input id="chat-input" placeholder="Type your question..." onkeydown="if(event.key==='Enter') askAI()">
+            <button class="btn btn-primary" onclick="askAI()">Ask</button>
+          </div>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:22px;" onclick="backToDashboard()">← Back to dashboard</button>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+  addChatMessage("EduBridge AI", "Hello! 👋 I'm your EduBridge AI assistant.\n\nYou can ask me about Python, Engineering Mechanics, Engineering Chemistry, Communicative English, BEEE, SMVC, or general study topics.");
+}
+ 
+function addChatMessage(sender, text){
+  const log = document.getElementById('chat-log');
+  const cls = sender === "You" ? "user" : "bot";
+  log.appendChild(el(`<div class="msg ${cls}"><span class="sender">${esc(sender)}</span>${esc(text)}</div>`));
+  log.scrollTop = log.scrollHeight;
+}
+ 
+function askAI(){
+  const input = document.getElementById('chat-input');
+  const q = input.value.trim();
+  if(!q) return;
+  addChatMessage("You", q);
+  input.value = "";
+  setTimeout(() => addChatMessage("EduBridge AI", generateAIAnswer(q)), 250);
+}
+ 
+function generateAIAnswer(question){
+  const q = question.toLowerCase();
+  if(q.includes("python")) return "Python is a high-level programming language widely used in scripting, automation and data science.\n\nKey topics for this semester: input/output, loops, data structures (lists, tuples, sets, dictionaries), functions and modules, and NumPy / Matplotlib / Pandas.";
+  if(q.includes("mechanics")) return "Engineering Mechanics deals with forces and their effects on bodies at rest or in motion.\n\nStart with free-body diagrams and equilibrium — most numericals build on them.";
+  if(q.includes("chemistry")) return "Engineering Chemistry covers the chemical principles behind engineering — topics like water treatment, polymers, corrosion and fuels are common first-year focus areas.";
+  if(q.includes("english") || q.includes("communicat")) return "Communicative English focuses on listening, speaking, reading and writing skills — practise emails, reports and short presentations regularly.";
+  if(q.includes("beee") || q.includes("electrical") || q.includes("electronics")) return "BEEE introduces basic electrical and electronics engineering: circuit laws (Ohm, KCL, KVL), AC fundamentals, and basic devices like diodes and transistors.";
+  if(q.includes("smvc") || q.includes("calculus")) return "SMVC (Single and Multivariable Calculus) covers differentiation and integration, partial derivatives, multiple integrals and vector calculus (Green\u2019s and Gauss\u2019s theorems). Check Courses \u2192 SMVC \u2192 Question Papers for the Winter 2024-25 paper.";
+  if(q.includes("assignment")) return "You can track and check off assignments from the Assignments section on your dashboard.";
+  if(q.includes("syllabus")) return "Open Courses (or Study Material → Subjects) and click any subject — its syllabus opens first.";
+  if(q.includes("test") || q.includes("exam")) return "Unit tests for each subject are listed under Study Material → Tests. Attempt them after finishing the related notes.";
+  if(q.includes("hello") || /\bhi\b/.test(q)) return "Hello! 👋 How can I help you with your studies today?";
+  if(q.includes("thank")) return "You're welcome! 😊 Keep at it.";
+  return "That's an interesting question! 📚\n\nI can currently help with Python, Engineering Mechanics, Engineering Chemistry, Communicative English, BEEE and SMVC. Try asking about one of these subjects.";
+}
+ 
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+function screenProgress(){
+  const u = users[currentEmail];
+  const p = u.progress || { study_hours:0, videos_watched:0, assignments_done:0, courses_completed:0 };
+  const totalScore = Math.min(p.study_hours,10) + Math.min(p.videos_watched,10) + Math.min(p.assignments_done,10) + Math.min(p.courses_completed,5);
+  const pct = Math.min(Math.round((totalScore/35)*100), 100);
+ 
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// THIS SEMESTER</span>
+          <h1>Progress</h1>
+          <p>Track your learning momentum across all subjects.</p>
+        </div>
+        <div class="overall-bar-wrap">
+          <span class="overall-num">${pct}%</span> <span style="color:var(--text-mid);">overall progress</span>
+          <div class="overall-track"><div class="prog-fill" style="width:${pct}%; height:100%;"></div></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><span class="ic">⏱️</span><b>${p.study_hours}</b><span>Study hours</span></div>
+          <div class="stat-card"><span class="ic">🎥</span><b>${p.videos_watched}</b><span>Videos watched</span></div>
+          <div class="stat-card"><span class="ic">📝</span><b>${p.assignments_done}</b><span>Assignments done</span></div>
+          <div class="stat-card"><span class="ic">🎓</span><b>${p.courses_completed}</b><span>Courses completed</span></div>
+        </div>
+        <button class="btn btn-amber" onclick="addStudyHour()">➕ Add study hour</button>
+        <div style="margin-top:22px;">
+          <button class="btn btn-ghost" onclick="backToDashboard()">← Back to dashboard</button>
+        </div>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+}
+ 
+async function addStudyHour(){
+  const u = users[currentEmail];
+  u.progress = u.progress || {};
+  u.progress.study_hours = (u.progress.study_hours || 0) + 1;
+  await saveUsers();
+  alert("1 study hour added successfully!");
+  screenProgress();
+}
+ 
+/* =========================================================
+   PROFILE
+   ========================================================= */
+function screenProfile(){
+  const u = users[currentEmail];
+  const details = [
+    ["Name", u.name], ["Email", currentEmail], ["Date of birth", u.dob], ["Age", u.age],
+    ["Class", u.class], ["University", u.university], ["College", u.college],
+    ["Department", u.department], ["Course", u.course], ["Semester", u.semester]
+  ];
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// ACCOUNT</span>
+          <h1>Student profile</h1>
+          <p>Your complete EduBridge student information.</p>
+        </div>
+        <div class="profile-grid" style="max-width:820px;">
+          ${details.map(([k,v]) => `
+            <div class="profile-item">
+              <div class="k">${k.toUpperCase()}</div>
+              <div class="v">${v ? esc(String(v)) : '<span style="color:var(--text-dim);">Not provided</span>'}</div>
+            </div>`).join("")}
+        </div>
+        <button class="btn btn-ghost" style="margin-top:22px;" onclick="backToDashboard()">← Back to dashboard</button>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+}
+ 
+function backToDashboard(){
+  if(currentRole === "mentor") screenMentorDashboard();
+  else screenDashboard();
+}
+ 
+/* =========================================================
+   MODAL
+   ========================================================= */
+function showModal(title, bodyHtml, buttons, wide){
+  const overlay = el(`<div class="modal-overlay" id="modal-overlay"></div>`);
+  const box = el(`<div class="modal-box"><h3>${esc(title)}</h3><div id="modal-body"></div><div id="modal-actions" style="display:flex; gap:10px; margin-top:6px;"></div></div>`);
+  box.querySelector('#modal-body').innerHTML = bodyHtml;
+  if(wide) box.style.maxWidth = '680px';
+  const actions = box.querySelector('#modal-actions');
+  buttons.forEach(b => {
+    const btn = el(`<button class="btn ${b.cls}" style="flex:1;">${esc(b.label)}</button>`);
+    btn.onclick = b.action;
+    actions.appendChild(btn);
+  });
+  overlay.appendChild(box);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+  document.body.appendChild(overlay);
+}
+function closeModal(){
+  const o = document.getElementById('modal-overlay');
+  if(o) o.remove();
+}
+ 
+/* =========================================================
+   BOOT
+   ========================================================= */
+ 
+/* =========================================================
+   FEEDBACK / REVIEW / COMPLAINT BOX  (floating doodle, every screen)
+   Stored in shared storage so mentors can read what anyone posts.
+   ========================================================= */
+const FB_KEY = "edubridge_feedback_v1";
+const FB_TYPES = {
+  feedback:  { icon:"💬", label:"Feedback",  ph:"What's working, what could be better?" },
+  review:    { icon:"⭐", label:"Review",    ph:"How was your experience with the portal or a subject?" },
+  complaint: { icon:"🚩", label:"Complaint", ph:"Tell us what went wrong so it can be fixed…" }
+};
+let fbType = "feedback";
+let fbRating = 0;
+ 
+async function loadFeedback(){
+  try{
+    if(window.storage){
+      const r = await window.storage.get(FB_KEY, true);
+      return r && r.value ? JSON.parse(r.value) : [];
+    }
+    const raw = localStorage.getItem(FB_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+async function saveFeedback(list){
+  try{
+    if(window.storage){
+      const r = await window.storage.set(FB_KEY, JSON.stringify(list), true);
+      return !!r;
+    }
+    localStorage.setItem(FB_KEY, JSON.stringify(list));
+    return true;
+  }catch(e){ console.error("feedback save failed", e); return false; }
+}
+ 
+function doodleBubble(){
+  return `<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 15 C9 10 13 8 18 8 L46 9 C51 9 56 12 55 18 L54 36 C54 41 50 44 45 44 L31 45 L19 57 L20 45 L16 45 C11 45 8 41 9 36 Z" fill="#101B2E" stroke="#38BDF8" stroke-width="3"/>
+    <path d="M21 22 Q27 15 33 22 T46 22" stroke="#F2A93B" stroke-width="3"/>
+    <path d="M21 32 Q27 26 33 32 T46 32" stroke="#7DD3FC" stroke-width="3"/>
+    <path d="M58 3 L58 10 M54.5 6.5 L61.5 6.5" stroke="#F2A93B" stroke-width="2.5"/>
+    <path d="M3 30 L7 27" stroke="#38BDF8" stroke-width="2.5"/>
+  </svg>`;
+}
+ 
+function mountFeedbackWidget(){
+  if(document.getElementById('fb-root')) return;
+  const root = document.createElement('div');
+  root.id = 'fb-root';
+  root.innerHTML = `
+    <button class="fb-fab" id="fb-fab" onclick="toggleFeedback()" aria-label="Open feedback, review and complaint box" title="Feedback, reviews &amp; complaints">
+      ${doodleBubble()}
+      <span class="fb-tip">Got feedback? ✎</span>
+    </button>
+    <div class="fb-panel" id="fb-panel" hidden></div>`;
+  document.body.appendChild(root);
+}
+ 
+function toggleFeedback(){
+  const panel = document.getElementById('fb-panel');
+  if(!panel) return;
+  if(panel.hidden){
+    renderFeedbackPanel();
+    panel.hidden = false;
+  } else {
+    panel.hidden = true;
+  }
+}
+ 
+function renderFeedbackPanel(){
+  const panel = document.getElementById('fb-panel');
+  const me = currentEmail && users[currentEmail] ? users[currentEmail] : null;
+  fbType = "feedback"; fbRating = 0;
+  panel.innerHTML = `
+    <div class="fb-head">
+      <span class="fb-title">Got something to say?</span>
+      <button class="fb-x" onclick="toggleFeedback()" aria-label="Close">✕</button>
+    </div>
+    <p class="fb-sub">Feedback, a review or a complaint — anyone can post here, and your mentors will see it.</p>
+    <div class="fb-types" id="fb-types">
+      ${Object.entries(FB_TYPES).map(([k,t]) => `<button class="${k==='feedback'?'active':''} ${k==='complaint'?'is-complaint':''}" data-t="${k}" onclick="setFbType('${k}')">${t.icon} ${t.label}</button>`).join("")}
+    </div>
+    <div class="fb-stars" id="fb-stars" style="display:none;">
+      ${[1,2,3,4,5].map(n => `<button data-n="${n}" onclick="setFbRating(${n})" aria-label="${n} star${n>1?'s':''}">★</button>`).join("")}
+      <span id="fb-star-label">rate it</span>
+    </div>
+    <div class="fb-field">
+      <label>About</label>
+      <select id="fb-subject">
+        <option value="">General / the portal</option>
+        ${SUBJECTS.map(x => `<option value="${esc(x.code)}">${esc(x.name)}</option>`).join("")}
+      </select>
+    </div>
+    <div class="fb-field">
+      <label>Your message</label>
+      <textarea id="fb-msg" maxlength="600" placeholder="${esc(FB_TYPES.feedback.ph)}" oninput="document.getElementById('fb-count').textContent = this.value.length + ' / 600'"></textarea>
+      <div class="fb-count" id="fb-count">0 / 600</div>
+    </div>
+    <div class="fb-field">
+      <label>Name (optional)</label>
+      <input type="text" id="fb-name" maxlength="60" placeholder="Your name" value="${esc(me ? me.name : "")}">
+    </div>
+    <label class="fb-anon"><input type="checkbox" id="fb-anon"> Post anonymously</label>
+    <div class="error-text" id="fb-error"></div>
+    <button class="btn btn-primary btn-full" id="fb-submit" onclick="submitFeedback()">Send it ✈</button>
+  `;
+}
+ 
+function setFbType(t){
+  fbType = t;
+  document.querySelectorAll('#fb-types button').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+  document.getElementById('fb-stars').style.display = (t === 'review') ? 'flex' : 'none';
+  document.getElementById('fb-msg').placeholder = FB_TYPES[t].ph;
+}
+ 
+function setFbRating(n){
+  fbRating = n;
+  const words = ["", "poor", "meh", "okay", "good", "loved it!"];
+  document.querySelectorAll('#fb-stars button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) <= n));
+  document.getElementById('fb-star-label').textContent = words[n];
+}
+ 
+async function submitFeedback(){
+  const msgEl = document.getElementById('fb-msg');
+  const err = document.getElementById('fb-error');
+  const btn = document.getElementById('fb-submit');
+  const msg = msgEl.value.trim();
+  const anon = document.getElementById('fb-anon').checked;
+  const nameTyped = document.getElementById('fb-name').value.trim();
+  const subject = document.getElementById('fb-subject').value;
+ 
+  if(msg.length < 5){ err.textContent = "Please write at least a few words."; return; }
+  if(fbType === 'review' && !fbRating){ err.textContent = "Please pick a star rating for your review."; return; }
+  err.textContent = "";
+  btn.disabled = true; btn.textContent = "Sending…";
+ 
+  const rec = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    type: fbType,
+    rating: fbType === 'review' ? fbRating : 0,
+    subject,
+    message: msg,
+    name: anon ? "Anonymous" : (nameTyped || (currentEmail && users[currentEmail] ? users[currentEmail].name : "Anonymous")),
+    role: anon ? "" : (currentRole || ""),
+    ts: Date.now()
+  };
+  const list = await loadFeedback();
+  list.push(rec);
+  const ok = await saveFeedback(list.slice(-500));
+  if(!ok){
+    btn.disabled = false; btn.textContent = "Send it ✈";
+    err.textContent = "Couldn't save right now. Please try again.";
+    return;
+  }
+  const panel = document.getElementById('fb-panel');
+  panel.innerHTML = `
+    <div class="fb-done">
+      <svg viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 34 C8 18 20 8 34 9 C48 10 57 21 55 35 C53 49 41 57 29 55 C17 53 8 46 8 34 Z" stroke="#38BDF8" stroke-width="3" fill="#101B2E"/>
+        <path d="M19 33 L28 42 L46 22" stroke="#34D399" stroke-width="4.5"/>
+      </svg>
+      <h4>Thank you!</h4>
+      <p>Your ${esc(FB_TYPES[rec.type].label.toLowerCase())} has been sent to the mentors.</p>
+      <div class="row">
+        <button class="btn btn-ghost btn-full" onclick="renderFeedbackPanel()">Send another</button>
+        <button class="btn btn-primary btn-full" onclick="toggleFeedback()">Close</button>
+      </div>
+    </div>`;
+}
+ 
+/* ---------- mentor view ---------- */
+async function mentorViewFeedback(){
+  const list = (await loadFeedback()).slice().sort((a,b) => b.ts - a.ts);
+  const counts = { feedback:0, review:0, complaint:0 };
+  list.forEach(f => { if(counts[f.type] !== undefined) counts[f.type]++; });
+  const stars = n => "★".repeat(n) + "☆".repeat(5-n);
+  const items = list.length ? list.map(f => {
+    const t = FB_TYPES[f.type] || FB_TYPES.feedback;
+    const subj = f.subject ? subjectName(f.subject) : "General";
+    return `
+    <div class="fb-item ${esc(f.type)}">
+      <div class="fb-item-top">
+        <span class="badge-mono">${t.icon} ${esc(t.label.toUpperCase())}</span>
+        ${f.rating ? `<span class="stars">${stars(f.rating)}</span>` : ""}
+        <span style="color:var(--text-mid);">${esc(subj)}</span>
+        <span class="when">${esc(new Date(f.ts).toLocaleString())}</span>
+      </div>
+      <div class="fb-item-msg">${esc(f.message)}</div>
+      <div class="fb-item-foot">
+        <span>— ${esc(f.name || "Anonymous")}${f.role ? " · " + esc(f.role) : ""}</span>
+        <button class="fb-del" onclick="deleteFeedback('${esc(f.id)}')">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join("") : `<p style="color:var(--text-dim); padding:20px; text-align:center;">Nothing here yet. Feedback, reviews and complaints will show up as people post them.</p>`;
+ 
+  closeModal();
+  showModal("Feedback box",
+    `<p style="color:var(--text-mid); font-size:13px; margin:-6px 0 14px 0;">${list.length} total · 💬 ${counts.feedback} feedback · ⭐ ${counts.review} reviews · 🚩 ${counts.complaint} complaints</p>
+     <div class="mentor-list">${items}</div>`,
+    [{label:"Close", cls:"btn-ghost", action:closeModal}], true);
+}
+ 
+async function deleteFeedback(id){
+  if(!confirm("Delete this entry?")) return;
+  const list = (await loadFeedback()).filter(f => f.id !== id);
+  await saveFeedback(list);
+  mentorViewFeedback();
+}
+
+const INTERVIEW_QA = {
+  sql: { icon:"🗄️", title:"SQL Questions", desc:"Queries, joins, keys and database basics", items:[
+    { q:"What is SQL and what are its main command types?",
+      a:"SQL (Structured Query Language) is used to create, read, update and delete data in relational databases.\n\n• DDL – CREATE, ALTER, DROP, TRUNCATE\n• DML – INSERT, UPDATE, DELETE\n• DQL – SELECT\n• DCL – GRANT, REVOKE\n• TCL – COMMIT, ROLLBACK, SAVEPOINT" },
+    { q:"Difference between DELETE, TRUNCATE and DROP?",
+      a:"DELETE removes selected rows (can use WHERE, can be rolled back).\nTRUNCATE removes all rows quickly and keeps the table structure.\nDROP removes the whole table, including its structure." },
+    { q:"What is a Primary Key and a Foreign Key?",
+      a:"A Primary Key uniquely identifies each row; it cannot be NULL or duplicated. A Foreign Key is a column that refers to the primary key of another table and links the two tables." },
+    { q:"Difference between WHERE and HAVING?",
+      a:"WHERE filters rows before grouping. HAVING filters groups after GROUP BY, so it can use aggregate functions.",
+      code:"SELECT dept, COUNT(*) AS total\nFROM students\nWHERE semester = 1\nGROUP BY dept\nHAVING COUNT(*) > 10;" },
+    { q:"Explain the types of JOINs.",
+      a:"INNER JOIN – only matching rows from both tables.\nLEFT JOIN – all rows from the left table plus matches from the right.\nRIGHT JOIN – all rows from the right table plus matches from the left.\nFULL JOIN – all rows from both tables.\nCROSS JOIN – every combination of rows.",
+      code:"SELECT s.name, c.course_name\nFROM students s\nINNER JOIN courses c ON s.course_id = c.id;" },
+    { q:"Find the second highest salary.",
+      a:"Use a subquery, or LIMIT with OFFSET.",
+      code:"SELECT MAX(salary) FROM employees\nWHERE salary < (SELECT MAX(salary) FROM employees);\n\n-- or\nSELECT DISTINCT salary FROM employees\nORDER BY salary DESC LIMIT 1 OFFSET 1;" },
+    { q:"What is the difference between UNION and UNION ALL?",
+      a:"UNION combines results and removes duplicates. UNION ALL keeps duplicates and is faster." },
+    { q:"What is normalization?",
+      a:"Normalization organizes data to reduce redundancy and improve integrity. 1NF: atomic values. 2NF: no partial dependency. 3NF: no transitive dependency." },
+    { q:"What is an index and why is it used?",
+      a:"An index is a data structure that speeds up searches on a column, like a book's index. The trade-off is that it uses extra space and slows down INSERT/UPDATE slightly.",
+      code:"CREATE INDEX idx_name ON students(name);" },
+    { q:"Find duplicate records in a table.",
+      a:"Group by the column and keep the groups that occur more than once.",
+      code:"SELECT email, COUNT(*)\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1;" }
+  ]},
+  python: { icon:"🐍", title:"Python Questions", desc:"Core concepts, data structures and coding questions", items:[
+    { q:"What are the key features of Python?",
+      a:"Python is interpreted, dynamically typed, easy to read, object-oriented, and has a large standard library and community." },
+    { q:"Difference between List and Tuple?",
+      a:"A list is mutable (can be changed) and uses []. A tuple is immutable and uses (). Tuples are slightly faster and can be dictionary keys." },
+    { q:"What are mutable and immutable types?",
+      a:"Mutable: list, dict, set (can change after creation). Immutable: int, float, str, tuple (cannot change in place)." },
+    { q:"Difference between == and is?",
+      a:"== compares values. is checks whether both names refer to the same object in memory.",
+      code:"a = [1, 2]\nb = [1, 2]\nprint(a == b)  # True\nprint(a is b)  # False" },
+    { q:"What is a lambda function?",
+      a:"A small anonymous one-line function.",
+      code:"square = lambda x: x * x\nprint(square(5))  # 25" },
+    { q:"What are *args and **kwargs?",
+      a:"*args collects extra positional arguments as a tuple. **kwargs collects extra keyword arguments as a dictionary.",
+      code:"def demo(*args, **kwargs):\n    print(args, kwargs)\n\ndemo(1, 2, name='Ravi')" },
+    { q:"What is a list comprehension?",
+      a:"A short way to build a list from a loop.",
+      code:"squares = [x*x for x in range(1, 6) if x % 2 == 1]\nprint(squares)  # [1, 9, 25]" },
+    { q:"Shallow copy vs deep copy?",
+      a:"A shallow copy copies the outer object but shares nested objects. A deep copy (copy.deepcopy) copies everything recursively." },
+    { q:"Write a program to check if a string is a palindrome.",
+      a:"Compare the string with its reverse.",
+      code:"s = input('Enter: ').lower()\nprint('Palindrome' if s == s[::-1] else 'Not palindrome')" },
+    { q:"Write a FizzBuzz program for 1 to 50.",
+      a:"Check divisibility by 15 first, then 3 and 5.",
+      code:"for i in range(1, 51):\n    if i % 15 == 0: print('FizzBuzz')\n    elif i % 3 == 0: print('Fizz')\n    elif i % 5 == 0: print('Buzz')\n    else: print(i)" },
+    { q:"How do you remove duplicates from a list?",
+      a:"Convert it to a set, or use dict.fromkeys() to keep the order.",
+      code:"nums = [1, 2, 2, 3, 1]\nprint(list(set(nums)))\nprint(list(dict.fromkeys(nums)))" }
+  ]},
+  hr: { icon:"🤝", title:"HR Questions", desc:"Common HR round questions with sample approaches", items:[
+    { q:"Tell me about yourself.",
+      a:"Keep it to about 1 minute: who you are (name, branch, college), your key skills and projects, and what you want to do next. Example: \"I'm a first-year B.Tech student who enjoys programming. I've learned Python and SQL, built small projects, and I'm looking for an opportunity to apply and grow these skills.\"" },
+    { q:"What are your strengths?",
+      a:"Pick 2–3 real strengths relevant to the role (quick learner, problem solving, teamwork) and back each with a short example." },
+    { q:"What is your weakness?",
+      a:"Name a genuine, non-critical weakness and show how you are improving it. Example: \"I used to hesitate to speak in groups, so I joined group discussions and presentations to improve.\"" },
+    { q:"Why should we hire you?",
+      a:"Connect your skills to their needs: \"I have the technical basics, I learn fast, and I'm committed to doing quality work and growing with the team.\"" },
+    { q:"Where do you see yourself in 5 years?",
+      a:"Show ambition and stability: growing technical skills, taking on more responsibility, and contributing to the company's goals." },
+    { q:"Why do you want to join this company?",
+      a:"Research the company beforehand. Mention its products, culture or learning opportunities and how they match your goals." },
+    { q:"Tell me about a challenge you faced and how you handled it.",
+      a:"Use the STAR method: Situation, Task, Action, Result. Choose a project or academic example and end with what you learned." },
+    { q:"How do you handle pressure or deadlines?",
+      a:"Explain that you prioritize tasks, break work into steps, stay calm and ask for help early when needed. Add a short real example." },
+    { q:"What are your salary expectations?",
+      a:"As a fresher, say you're flexible and expect a fair package as per company standards, and that learning and growth matter most to you." },
+    { q:"Do you have any questions for us?",
+      a:"Always ask something: \"What does training look like for new joiners?\" or \"What skills would help me succeed in the first 6 months?\"" }
+  ]}
+};
+
+function screenInterviewHome(){
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// CAREER READY</span>
+          <h1>Interview preparation 💼</h1>
+          <p>Practise the most common SQL, Python and HR questions.</p>
+        </div>
+        <div class="iv-grid">
+          ${Object.entries(INTERVIEW_QA).map(([k,c]) => `
+            <div class="bento-card" onclick="screenInterviewCategory('${k}')">
+              <span class="ic">${c.icon}</span><h3>${esc(c.title)}</h3><p>${esc(c.desc)}</p>
+              <span class="iv-count">${c.items.length} QUESTIONS</span>
+            </div>`).join("")}
+        </div>
+        <button class="btn btn-ghost" onclick="backToDashboard()">← Back to dashboard</button>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+}
+
+function screenInterviewCategory(key){
+  const c = INTERVIEW_QA[key];
+  render(`
+    ${topbar()}
+    <main>
+      <div class="container">
+        <div class="page-head">
+          <span class="eyebrow">// INTERVIEW PREP · ${esc(key.toUpperCase())}</span>
+          <h1>${c.icon} ${esc(c.title)}</h1>
+          <p>${c.items.length} questions · click a question to see the answer.</p>
+        </div>
+        <div style="max-width:860px;">
+          ${c.items.map((x,i) => `
+            <details class="paper-card">
+              <summary><span class="badge-mono">Q${i+1}</span><span>${esc(x.q)}</span></summary>
+              <div class="paper-body">
+                <p class="iv-ans">${esc(x.a)}</p>
+                ${x.code ? `<pre class="qb-code">${esc(x.code)}</pre>` : ""}
+              </div>
+            </details>`).join("")}
+        </div>
+        <button class="btn btn-ghost" onclick="screenInterviewHome()">← Back to interview prep</button>
+        <div style="height:40px;"></div>
+      </div>
+    </main>
+  `);
+}
+ 
+async function boot(){
+  users = await loadUsers();
+  mountFeedbackWidget();
+  screenLogin();
+}
+boot();
+</script>
+</body>
+</html>
